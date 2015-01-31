@@ -1,0 +1,11 @@
+{
+  "generator-angular-famous-ionic": {
+    "appname": "angularCore",
+    "clientFolder": "src",
+    "ionic": false,
+    "famous": false,
+    "ngCordova": false,
+    "fontawesome": false,
+    "bootstrap": false
+  }
+}
