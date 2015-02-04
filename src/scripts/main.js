@@ -7,7 +7,7 @@ var angular = require('angular');
 var app = angular.module(namespace, [
     // inject:modules start
     require('./core')(namespace).name,
-        require('./testzone')(namespace).name
+    require('./testzone')(namespace).name
     // inject:modules end
 ]);
 

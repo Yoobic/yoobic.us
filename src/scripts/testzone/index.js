@@ -8,7 +8,7 @@ module.exports = function(namespace) {
     var fullname = namespace + '.' + modulename;
 
     var angular = require('angular');
-    var core = require('./core');
+    var core = require('../core')(namespace);
     var app = angular.module(fullname, ['ui.router', 'famous.angular', core.name]);
     app.namespace = app.namespace || {};
     app.namespace.core = core.name;
