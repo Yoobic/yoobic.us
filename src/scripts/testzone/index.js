@@ -8,7 +8,10 @@ module.exports = function(namespace) {
     var fullname = namespace + '.' + modulename;
 
     var angular = require('angular');
-    var app = angular.module(fullname, ['ui.router', 'famous.angular']);
+    var core = require('./core');
+    var app = angular.module(fullname, ['ui.router', 'famous.angular', core.name]);
+    app.namespace = app.namespace || {};
+    app.namespace.core = core.name;
     // inject:folders start
     // inject:folders end
 
