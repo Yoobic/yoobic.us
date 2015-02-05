@@ -1,5 +1,5 @@
 'use strict';
-/*eslint consistent-this:[2,  "faSlideCtrl"] */
+/*eslint consistent-this:[1,  "faSlideCtrl"] */
 var directivename = 'faSlide';
 
 module.exports = function(app) {
@@ -7,26 +7,36 @@ module.exports = function(app) {
     // controller
     var controllerDeps = [];
     var controller = function() {
+
         var faSlideCtrl = this;
         faSlideCtrl.directivename = directivename;
     };
     controller.$inject = controllerDeps;
 
+    /*eslint-disable consistent-this */
+
     // directive
     var directiveDeps = [];
     var directive = function() {
         return {
+            require: ['faSlide', '^faSlideBox'],
             restrict: 'AE',
-            scope: {
-                title: '@' // '@' reads attribute value, '=' provides 2-way binding, '&" works with functions
-            },
-            transclude: true,
+            scope: true,
             controller: controller,
             controllerAs: 'faSlideCtrl',
             bindToController: true,
             template: require('./faSlide.html'),
-            link: function(scope, element, attrs) {
-
+            transclude: true,
+            compile: function(tElement, tAttrs) {
+                return {
+                    pre: function(scope, element, attrs, ctrls) {},
+                    post: function(scope, element, attrs, ctrls) {
+                        var faSlideCtrl = ctrls[0];
+                        var faSlideBoxCtrl = ctrls[1];
+                        faSlideCtrl.eventHandler = faSlideBoxCtrl.eventHandler;
+                        faSlideCtrl.getScrollView = faSlideBoxCtrl.getScrollView;
+                    }
+                };
             }
         };
     };

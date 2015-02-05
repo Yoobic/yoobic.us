@@ -5,28 +5,50 @@ var directivename = 'faSlideBox';
 module.exports = function(app) {
 
     // controller
-    var controllerDeps = [];
-    var controller = function() {
+    var controllerDeps = ['$famous'];
+    var controller = function($famous) {
         var faSlideBoxCtrl = this;
         faSlideBoxCtrl.directivename = directivename;
+
+        var EventHandler = $famous['famous/core/EventHandler'];
+        faSlideBoxCtrl.eventHandler = new EventHandler();
+
+        faSlideBoxCtrl.getScrollView = function() {
+            if(!faSlideBoxCtrl.scrollView) {
+                faSlideBoxCtrl.scrollView = $famous.find('fa-scroll-view')[0];
+            }
+            return faSlideBoxCtrl.scrollView;
+        };
     };
     controller.$inject = controllerDeps;
 
+    /*eslint-disable consistent-this */
+
     // directive
-    var directiveDeps = [];
-    var directive = function() {
+    var directiveDeps = ['$famous'];
+    var directive = function($famous) {
         return {
+            require: ['faSlideBox'],
             restrict: 'AE',
             scope: {
                 title: '@' // '@' reads attribute value, '=' provides 2-way binding, '&" works with functions
             },
-            transclude: true,
             controller: controller,
             controllerAs: 'faSlideBoxCtrl',
             bindToController: true,
             template: require('./faSlideBox.html'),
-            link: function(scope, element, attrs) {
+            transclude: true,
+            compile: function(tElement, tAttrs) {
+                return {
+                    pre: function(scope, element, attrs) {
 
+                    },
+                    post: function(scope, element, attrs, ctrls) {
+                        var faSlideBoxCtrl = ctrls[0];
+
+                        faSlideBoxCtrl.getScrollView().renderNode.sync.addSync(['mouse']);
+                    }
+                };
             }
         };
     };

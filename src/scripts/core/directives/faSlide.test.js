@@ -21,9 +21,12 @@ describe(app.name, function() {
                 this.$scope = $injector.get('$rootScope').$new();
             }));
 
-            it('should succeed', function() {
-                var element = unitHelper.compileDirective.call(this, directivename, '<fa-slide></fa-slide>');
-                expect(element.html().trim()).toBeDefined();
+            it('should require faSlideBox', function() {
+                var self = this;
+                expect(function() {
+                    var element = unitHelper.compileDirective.call(self, directivename, '<fa-slide></fa-slide>');
+                    element.html();
+                }).toThrowError();
             });
 
         });
