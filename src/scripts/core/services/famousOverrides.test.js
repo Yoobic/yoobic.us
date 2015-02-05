@@ -152,7 +152,7 @@ describe(app.name, function() {
                 checkGetPageDistance.call(this, 1, done);
             });
 
-            it('getTotalPage() with surfaces should succeed', function() {
+            it('getTotalPages() with surfaces should succeed', function() {
                 this.service.apply();
                 var expectedSize = [200, 300];
                 var scrollView = new this.Scrollview();
@@ -164,18 +164,18 @@ describe(app.name, function() {
 
                 scrollView.sequenceFrom(createSurfaces.call(this));
                 Engine.createContext().add(modifier).add(scrollView);
-                var total = scrollView.getTotalPage();
+                var total = scrollView.getTotalPages();
                 expect(total).toEqual(numberOfSurfaces);
 
             });
 
-            it('getTotalPage() with no surfaces should return null', function() {
+            it('getTotalPages() with no surfaces should return null', function() {
                 this.service.apply();
                 var scrollView = new this.Scrollview();
                 var Engine = this.$famous['famous/core/Engine'];
 
                 Engine.createContext().add(scrollView);
-                var total = scrollView.getTotalPage();
+                var total = scrollView.getTotalPages();
                 expect(total).toEqual(0);
 
             });

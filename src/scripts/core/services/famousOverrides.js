@@ -48,7 +48,7 @@ module.exports = function(app) {
                 return retVal;
             };
 
-            Scrollview.prototype.getTotalPage = function() {
+            Scrollview.prototype.getTotalPages = function() {
                 if(!this._node) {
                     return 0;
                 }
