@@ -1,6 +1,6 @@
 'use strict';
-/*eslint consistent-this:[1,  "faSlideCtrl"] */
-var directivename = 'faSlide';
+/*eslint consistent-this:[1,  "yooSlideCtrl"] */
+var directivename = 'yooSlide';
 var angular = require('angular');
 module.exports = function(app) {
 
@@ -8,8 +8,8 @@ module.exports = function(app) {
     var controllerDeps = [];
     var controller = function() {
 
-        var faSlideCtrl = this;
-        faSlideCtrl.directivename = directivename;
+        var yooSlideCtrl = this;
+        yooSlideCtrl.directivename = directivename;
     };
     controller.$inject = controllerDeps;
 
@@ -19,19 +19,19 @@ module.exports = function(app) {
     var directiveDeps = [];
     var directive = function() {
         return {
-            require: ['faSlide', '^faSlideBox'],
+            require: ['yooSlide', '^yooSlideBox'],
             restrict: 'AE',
             scope: true,
             controller: controller,
-            controllerAs: 'faSlideCtrl',
+            controllerAs: 'yooSlideCtrl',
             bindToController: true,
-            template: require('./faSlide.html'),
+            template: require('./yooSlide.html'),
             transclude: true,
             compile: function(tElement, tAttrs) {
                 return {
                     pre: function(scope, element, attrs, ctrls) {
-                        var faSlideBoxCtrl = ctrls[1];
-                        scope.faSlideBoxCtrl = faSlideBoxCtrl;
+                        var yooSlideBoxCtrl = ctrls[1];
+                        scope.yooSlideBoxCtrl = yooSlideBoxCtrl;
                     },
                     post: function(scope, element, attrs, ctrls) {
 

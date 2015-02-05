@@ -2,7 +2,7 @@
 
 module.exports = function(app) {
     // inject:start
-    require('./faSlide')(app);
-    require('./faSlideBox')(app);
+    require('./yooSlide')(app);
+    require('./yooSlideBox')(app);
     // inject:end
 };

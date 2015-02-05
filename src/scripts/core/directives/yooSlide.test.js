@@ -2,7 +2,7 @@
 /*eslint consistent-this:[0] */
 var angular = require('angular-mocks');
 var app = require('../')('app');
-var directivename = 'faSlide';
+var directivename = 'yooSlide';
 var unitHelper = require('unitHelper');
 
 describe(app.name, function() {
@@ -21,10 +21,10 @@ describe(app.name, function() {
                 this.$scope = $injector.get('$rootScope').$new();
             }));
 
-            it('should require faSlideBox', function() {
+            it('should require yooSlideBox', function() {
                 var self = this;
                 expect(function() {
-                    var element = unitHelper.compileDirective.call(self, directivename, '<fa-slide></fa-slide>');
+                    var element = unitHelper.compileDirective.call(self, directivename, '<yoo-slide></yoo-slide>');
                     element.html();
                 }).toThrowError();
             });
