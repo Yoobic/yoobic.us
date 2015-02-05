@@ -16,8 +16,8 @@ module.exports = function(app) {
     /*eslint-disable consistent-this */
 
     // directive
-    var directiveDeps = [];
-    var directive = function() {
+    var directiveDeps = ['$famous'];
+    var directive = function($famous) {
 
         /**
          * Transclude the contents provided by the consumer into the template and
@@ -64,6 +64,7 @@ module.exports = function(app) {
                         var faSlideBoxCtrl = ctrls[1];
                         faSlideCtrl.eventHandler = faSlideBoxCtrl.eventHandler;
                         faSlideCtrl.getScrollView = faSlideBoxCtrl.getScrollView;
+                        // console.log($famous.find('fa-surface'));
                     }
                 };
             }
