@@ -27,6 +27,13 @@ describe(app.name, function() {
                     var element = unitHelper.compileDirective.call(self, directivename, '<fa-slide></fa-slide>');
                     element.html();
                 }).toThrowError();
+
+                expect(function() {
+                    var element = unitHelper.compileDirective.call(self, 'faSlideBox', '<fa-slide-box><fa-slide></fa-slide></fa-slide-box>');
+                    var slideEl = element.find('fa-slide');
+                    // var slide = unitHelper.compileDirective.call(self, directivename, '<fa-slide></fa-slide>');
+                    return slideEl.html().trim();
+                }).toBeDefined();
             });
 
         });
