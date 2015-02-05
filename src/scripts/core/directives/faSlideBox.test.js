@@ -78,11 +78,11 @@ describe(app.name, function() {
                 var surface = this.$famous.find('fa-surface')[0].renderNode;
 
                 expect(scrollView._touchCount).toBe(0);
-                surface._eventOutput.emit('drag', unitHelper.mockEvent({
+                surface._eventOutput.emit('mousedown', unitHelper.mockEvent({
                     count: 1
                 }));
 
-                //expect(scrollView._touchCount).toBe(1);
+                expect(scrollView._touchCount).toBe(1);
             });
 
         });
