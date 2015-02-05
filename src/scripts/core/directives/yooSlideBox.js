@@ -13,16 +13,35 @@ module.exports = function(app) {
         var EventHandler = $famous['famous/core/EventHandler'];
         yooSlideBoxCtrl.eventHandler = new EventHandler();
 
-        yooSlideBoxCtrl.getScrollView = function() {
-            if(!yooSlideBoxCtrl.scrollView) {
-                yooSlideBoxCtrl.scrollView = famousHelper.find('fa-scroll-view')[0];
+        yooSlideBoxCtrl.getScrollview = function() {
+            if(!yooSlideBoxCtrl.scrollview) {
+                yooSlideBoxCtrl.scrollview = famousHelper.find('fa-scroll-view')[0];
             }
-            return yooSlideBoxCtrl.scrollView;
+            return yooSlideBoxCtrl.scrollview;
         };
 
-        yooSlideBoxCtrl.getTotalPage = function() {
-            yooSlideBoxCtrl.getScrollView().getTotalPage();
+        yooSlideBoxCtrl.getTotalPages = function() {
+            if(yooSlideBoxCtrl.getScrollview()) {
+                return yooSlideBoxCtrl.getScrollview().renderNode.getTotalPages();
+            } else {
+                return 0;
+            }
         };
+
+        yooSlideBoxCtrl.getPageDistance = function(index) {
+            if(yooSlideBoxCtrl.getScrollview()) {
+                return yooSlideBoxCtrl.getScrollview().renderNode.getPageDistance(index);
+            } else {
+                return index;
+            }
+        };
+
+        yooSlideBoxCtrl.setMouseSync = function() {
+            if(yooSlideBoxCtrl.getScrollview()) {
+                yooSlideBoxCtrl.getScrollview().renderNode.setMouseSync();
+            }
+        };
+
     };
     controller.$inject = controllerDeps;
 
@@ -35,7 +54,7 @@ module.exports = function(app) {
             require: ['yooSlideBox'],
             restrict: 'AE',
             scope: {
-                title: '@' // '@' reads attribute value, '=' provides 2-way binding, '&" works with functions
+                showPager: '='
             },
             controller: controller,
             controllerAs: 'yooSlideBoxCtrl',
@@ -49,7 +68,8 @@ module.exports = function(app) {
                     },
                     post: function(scope, element, attrs, ctrls) {
                         var yooSlideBoxCtrl = ctrls[0];
-                        yooSlideBoxCtrl.getScrollView().renderNode.sync.addSync(['mouse']);
+                        yooSlideBoxCtrl.setMouseSync();
+
                     }
                 };
             }

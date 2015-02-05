@@ -30,6 +30,7 @@ module.exports = function(app) {
             compile: function(tElement, tAttrs) {
                 return {
                     pre: function(scope, element, attrs, ctrls) {
+                        // copying parent controller on the local scope, so we have easy access in the template
                         var yooSlideBoxCtrl = ctrls[1];
                         scope.yooSlideBoxCtrl = yooSlideBoxCtrl;
                     },

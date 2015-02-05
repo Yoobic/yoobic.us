@@ -43,7 +43,7 @@ module.exports = function() {
             './server/**/*.js', 'gulpfile.js', './gulp_tasks/**/*.js', 'karma.conf.js', './test/**/*.js'
         ],
         fonts: {
-            src: ['./' + clientFolder + '/fonts/*.*', './' + clientFolder + '/fonts/{{targetName}}/**/*.*'], // you can also add a specific src_appname
+            src: ['./' + clientFolder + '/fonts/*.*', './' + clientFolder + '/fonts/{{targetName}}/**/*.*', './bower_components/ionic/release/fonts/*.*'], // you can also add a specific src_appname
             dest: 'fonts'
         },
         html: {

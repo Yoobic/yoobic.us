@@ -54,6 +54,10 @@ module.exports = function(app) {
                 }
                 return this._node._.array.length;
             };
+
+            Scrollview.prototype.setMouseSync = function() {
+                this.sync.addSync(['mouse']);
+            };
         };
 
         return {
