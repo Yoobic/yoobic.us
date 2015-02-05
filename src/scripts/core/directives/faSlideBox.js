@@ -1,5 +1,5 @@
 'use strict';
- /*eslint consistent-this:[1,  "faSlideBoxCtrl"] */
+/*eslint consistent-this:[2,  "faSlideBoxCtrl"] */
 var directivename = 'faSlideBox';
 
 module.exports = function(app) {
@@ -22,6 +22,8 @@ module.exports = function(app) {
     };
     controller.$inject = controllerDeps;
 
+    /*eslint-disable consistent-this */
+
     // directive
     var directiveDeps = ['$famous'];
     var directive = function($famous) {
@@ -43,13 +45,8 @@ module.exports = function(app) {
                     },
                     post: function(scope, element, attrs, ctrls) {
                         var faSlideBoxCtrl = ctrls[0];
-                        // scope.$watch
-                        // console.log(faSlideBoxCtrl.getScrollView());
-                        // setTimeout(function() {
-                        debugger;
+
                         faSlideBoxCtrl.getScrollView().renderNode.sync.addSync(['mouse']);
-                        // faSlideBoxCtrl.scrollView = $famous.find('fa-scroll-view')[0].renderNode;
-                        // }, 1000);
                     }
                 };
             }

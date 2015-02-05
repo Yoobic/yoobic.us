@@ -7,10 +7,13 @@ module.exports = function(app) {
     // controller
     var controllerDeps = [];
     var controller = function() {
+
         var faSlideCtrl = this;
         faSlideCtrl.directivename = directivename;
     };
     controller.$inject = controllerDeps;
+
+    /*eslint-disable consistent-this */
 
     // directive
     var directiveDeps = [];
@@ -31,6 +34,7 @@ module.exports = function(app) {
                         var faSlideCtrl = ctrls[0];
                         var faSlideBoxCtrl = ctrls[1];
                         faSlideCtrl.eventHandler = faSlideBoxCtrl.eventHandler;
+                        faSlideCtrl.getScrollView = faSlideBoxCtrl.getScrollView;
                     }
                 };
             }
