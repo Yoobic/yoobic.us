@@ -8,7 +8,7 @@ describe(app.name, function() {
 
         describe(servicename, function() {
             var numberOfSurfaces = 10;
-
+            var waitTime = 300;
             var createSurfaces = function() {
                 var Surface = this.$famous['famous/core/Surface'];
                 var surfaces = [];
@@ -86,7 +86,97 @@ describe(app.name, function() {
                     var absolutePosition = scrollView.getAbsolutePosition();
                     expect(absolutePosition > 850).toBeTruthy();
                     done();
-                }, 500);
+                }, waitTime);
+
+            });
+
+            it('getContainerSize() with surfaces should succeed', function(done) {
+                this.service.apply();
+                var expectedSize = [200, 300];
+                var scrollView = new this.Scrollview();
+                var Engine = this.$famous['famous/core/Engine'];
+                var Modifier = this.$famous['famous/core/Modifier'];
+                var modifier = new Modifier({
+                    size: expectedSize
+                });
+
+                scrollView.sequenceFrom(createSurfaces.call(this));
+                Engine.createContext().add(modifier).add(scrollView);
+
+                setTimeout(function() {
+                    var size = scrollView.getContainerSize();
+                    expect(size).toEqual(expectedSize);
+                    done();
+                }, waitTime);
+
+            });
+
+            var checkGetPageDistance = function(direction, done) {
+                this.service.apply();
+                var expectedSize = [200, 300];
+
+                var scrollView = new this.Scrollview({
+                    direction: direction
+                });
+                var Engine = this.$famous['famous/core/Engine'];
+                var Modifier = this.$famous['famous/core/Modifier'];
+                var modifier = new Modifier({
+                    size: expectedSize
+                });
+                var surfaces = createSurfaces.call(this);
+                scrollView.sequenceFrom(surfaces);
+                Engine.createContext().add(modifier).add(scrollView);
+
+                setTimeout(function() {
+                    surfaces.forEach(function(surface, index) {
+                        var distance = scrollView.getPageDistance(index);
+                        expect(distance).toBe(index);
+                    });
+                    scrollView.setPosition(expectedSize[direction] / 2);
+                    setTimeout(function() {
+                        surfaces.forEach(function(surface, index) {
+                            var distance = scrollView.getPageDistance(index);
+                            expect(distance).toBe(index - 1 / 2);
+                        });
+                        done();
+                    }, waitTime);
+
+                }, waitTime);
+            };
+
+            it('getPageDistance() with surfaces should succeed when direction is 0', function(done) {
+                checkGetPageDistance.call(this, 0, done);
+            });
+
+            it('getPageDistance() with surfaces should succeed when direction is 1', function(done) {
+                checkGetPageDistance.call(this, 1, done);
+            });
+
+            it('getTotalPages() with surfaces should succeed', function() {
+                this.service.apply();
+                var expectedSize = [200, 300];
+                var scrollView = new this.Scrollview();
+                var Engine = this.$famous['famous/core/Engine'];
+                var Modifier = this.$famous['famous/core/Modifier'];
+                var modifier = new Modifier({
+                    size: expectedSize
+                });
+
+                scrollView.sequenceFrom(createSurfaces.call(this));
+                Engine.createContext().add(modifier).add(scrollView);
+                var total = scrollView.getTotalPages();
+                expect(total).toEqual(numberOfSurfaces);
+
+            });
+
+            it('getTotalPages() with no surfaces should return null', function() {
+                this.service.apply();
+                var scrollView = new this.Scrollview();
+                var Engine = this.$famous['famous/core/Engine'];
+
+                Engine.createContext().add(scrollView);
+                var total = scrollView.getTotalPages();
+                expect(total).toEqual(0);
 
             });
         });

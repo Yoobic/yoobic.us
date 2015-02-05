@@ -1,15 +1,15 @@
 'use strict';
-/*eslint consistent-this:[1,  "faSlideCtrl"] */
-var directivename = 'faSlide';
-
+/*eslint consistent-this:[1,  "yooSlideCtrl"] */
+var directivename = 'yooSlide';
+var angular = require('angular');
 module.exports = function(app) {
 
     // controller
     var controllerDeps = [];
     var controller = function() {
 
-        var faSlideCtrl = this;
-        faSlideCtrl.directivename = directivename;
+        var yooSlideCtrl = this;
+        yooSlideCtrl.directivename = directivename;
     };
     controller.$inject = controllerDeps;
 
@@ -46,25 +46,23 @@ module.exports = function(app) {
         };
 
         return {
-            require: ['faSlide', '^faSlideBox'],
+            require: ['yooSlide', '^yooSlideBox'],
             restrict: 'AE',
             scope: true,
             controller: controller,
-            controllerAs: 'faSlideCtrl',
+            controllerAs: 'yooSlideCtrl',
             bindToController: true,
             compile: function(tElement, tAttrs) {
-                var template = require('./faSlide.html');
+                var template = require('./yooSlide.html');
                 var wrapWithSurface = tElement.find('fa-surface').length ? false : true;
                 transcludeConsumerProvidedContents(template, tElement, wrapWithSurface);
                 return {
-
-                    pre: function(scope, element, attrs, ctrls) {},
+                    pre: function(scope, element, attrs, ctrls) {
+                        var yooSlideBoxCtrl = ctrls[1];
+                        scope.yooSlideBoxCtrl = yooSlideBoxCtrl;
+                    },
                     post: function(scope, element, attrs, ctrls) {
-                        var faSlideCtrl = ctrls[0];
-                        var faSlideBoxCtrl = ctrls[1];
-                        faSlideCtrl.eventHandler = faSlideBoxCtrl.eventHandler;
-                        faSlideCtrl.getScrollView = faSlideBoxCtrl.getScrollView;
-                        // console.log($famous.find('fa-surface'));
+
                     }
                 };
             }

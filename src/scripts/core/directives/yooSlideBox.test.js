@@ -2,7 +2,7 @@
 /*eslint consistent-this:[0] */
 var angular = require('angular-mocks');
 var app = require('../')('app');
-var directivename = 'faSlideBox';
+var directivename = 'yooSlideBox';
 var unitHelper = require('unitHelper');
 
 describe(app.name, function() {
@@ -27,17 +27,17 @@ describe(app.name, function() {
             });
 
             it('should succeed', function() {
-                var element = unitHelper.compileDirectiveFamous.call(this, directivename, '<fa-slide-box></fa-slide-box>');
+                var element = unitHelper.compileDirectiveFamous.call(this, directivename, '<yoo-slide-box></yoo-slide-box>');
                 expect(element.html().trim()).toBeDefined();
             });
 
             it('should auto implement the slideBox event pipeline', function() {
                 unitHelper.compileDirectiveFamous.call(this, directivename,
-                    '<fa-slide-box>' +
-                    '<fa-slide>' +
+                    '<yoo-slide-box>' +
+                    '<yoo-slide>' +
                     '<div class="test"></div>' +
-                    '</fa-slide>' +
-                    '</fa-slide-box>'
+                    '</yoo-slide>' +
+                    '</yoo-slide-box>'
                 );
                 this.$scope.$apply();
 
@@ -55,23 +55,15 @@ describe(app.name, function() {
                 }));
 
                 expect(testEventHandled).toBe(true);
-
-                // expect(scrollView._touchCount).toBe(0);
-                // surface._eventOutput.emit('mousewheel', unitHelper.mockEvent({
-                //     count: 1
-                // }));
-
-                // expect(scrollView._touchCount).toBe(1);
             });
 
             it('should support MouseSync', function() {
                 unitHelper.compileDirectiveFamous.call(this, directivename,
-                    '<fa-slide-box>' +
-                    '<fa-slide>' +
-                    // '<fa-surface  class="test" fa-size="[300, 100]"></fa-surface>' +
+                    '<yoo-slide-box>' +
+                    '<yoo-slide>' +
                     '<div class="test"></div>' +
-                    '</fa-slide>' +
-                    '</fa-slide-box>'
+                    '</yoo-slide>' +
+                    '</yoo-slide-box>'
                 );
 
                 var scrollView = this.$famous.find('fa-scroll-view')[0].renderNode;

@@ -27,6 +27,33 @@ module.exports = function(app) {
                 var _ = this._node._;
                 this.goToPage(_.array.length - 1);
             };
+
+            /**
+             * Gets the container size of the scroll view
+             * because .getSize() does not work properly
+             * @returns {Array} - The size as an array of double
+             */
+            Scrollview.prototype.getContainerSize = function() {
+                return this._scroller._contextSize;
+            };
+
+            Scrollview.prototype.getPageDistance = function(index) {
+                var retVal = index;
+
+                var length = this.getContainerSize()[this.options.direction || 0];
+                try {
+                    retVal = index - this.getAbsolutePosition() / length;
+                } catch(err) {}
+
+                return retVal;
+            };
+
+            Scrollview.prototype.getTotalPages = function() {
+                if(!this._node) {
+                    return 0;
+                }
+                return this._node._.array.length;
+            };
         };
 
         return {
