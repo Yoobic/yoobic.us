@@ -5,8 +5,8 @@ var directivename = 'faSlideBox';
 module.exports = function(app) {
 
     // controller
-    var controllerDeps = ['$famous'];
-    var controller = function($famous) {
+    var controllerDeps = ['$famous', app.name + '.famousHelper'];
+    var controller = function($famous, famousHelper) {
         var faSlideBoxCtrl = this;
         faSlideBoxCtrl.directivename = directivename;
 
@@ -15,9 +15,13 @@ module.exports = function(app) {
 
         faSlideBoxCtrl.getScrollView = function() {
             if(!faSlideBoxCtrl.scrollView) {
-                faSlideBoxCtrl.scrollView = $famous.find('fa-scroll-view')[0];
+                faSlideBoxCtrl.scrollView = famousHelper.find('fa-scroll-view')[0];
             }
             return faSlideBoxCtrl.scrollView;
+        };
+
+        faSlideBoxCtrl.getTotalPage = function() {
+            faSlideBoxCtrl.getScrollView().getTotalPage();
         };
     };
     controller.$inject = controllerDeps;
@@ -45,7 +49,6 @@ module.exports = function(app) {
                     },
                     post: function(scope, element, attrs, ctrls) {
                         var faSlideBoxCtrl = ctrls[0];
-
                         faSlideBoxCtrl.getScrollView().renderNode.sync.addSync(['mouse']);
                     }
                 };

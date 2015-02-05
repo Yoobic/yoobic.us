@@ -1,7 +1,7 @@
 'use strict';
 /*eslint consistent-this:[1,  "faSlideCtrl"] */
 var directivename = 'faSlide';
-
+var angular = require('angular');
 module.exports = function(app) {
 
     // controller
@@ -29,12 +29,12 @@ module.exports = function(app) {
             transclude: true,
             compile: function(tElement, tAttrs) {
                 return {
-                    pre: function(scope, element, attrs, ctrls) {},
-                    post: function(scope, element, attrs, ctrls) {
-                        var faSlideCtrl = ctrls[0];
+                    pre: function(scope, element, attrs, ctrls) {
                         var faSlideBoxCtrl = ctrls[1];
-                        faSlideCtrl.eventHandler = faSlideBoxCtrl.eventHandler;
-                        faSlideCtrl.getScrollView = faSlideBoxCtrl.getScrollView;
+                        scope.faSlideBoxCtrl = faSlideBoxCtrl;
+                    },
+                    post: function(scope, element, attrs, ctrls) {
+
                     }
                 };
             }
