@@ -15,7 +15,7 @@
     "url": "https://github.com/thaiat"
   },
   "files": [
-    "src"
+    "src/scripts/core"
   ],
   "main": "./src/scripts/core/index.js",
   "dependencies": {

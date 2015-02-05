@@ -13,6 +13,7 @@ module.exports = function(namespace) {
     app.namespace = app.namespace || {};
     app.namespace.core = core.name;
     // inject:folders start
+    require('./controllers')(app);
     // inject:folders end
 
     app.config(['$stateProvider', '$urlRouterProvider',
@@ -21,6 +22,12 @@ module.exports = function(namespace) {
             $stateProvider.state('home', {
                 url: '/',
                 template: require('./views/home.html')
+            });
+            $stateProvider.state('slidebox', {
+                url: '/slidebox',
+                template: require('./views/slidebox.html'),
+                controller: fullname + '.slidebox',
+                controllerAs: 'vm'
             });
         }
     ]);

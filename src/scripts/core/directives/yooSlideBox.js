@@ -1,23 +1,27 @@
 'use strict';
-/*eslint consistent-this:[2,  "faSlideBoxCtrl"] */
-var directivename = 'faSlideBox';
+/*eslint consistent-this:[2,  "yooSlideBoxCtrl"] */
+var directivename = 'yooSlideBox';
 
 module.exports = function(app) {
 
     // controller
-    var controllerDeps = ['$famous'];
-    var controller = function($famous) {
-        var faSlideBoxCtrl = this;
-        faSlideBoxCtrl.directivename = directivename;
+    var controllerDeps = ['$famous', app.name + '.famousHelper'];
+    var controller = function($famous, famousHelper) {
+        var yooSlideBoxCtrl = this;
+        yooSlideBoxCtrl.directivename = directivename;
 
         var EventHandler = $famous['famous/core/EventHandler'];
-        faSlideBoxCtrl.eventHandler = new EventHandler();
+        yooSlideBoxCtrl.eventHandler = new EventHandler();
 
-        faSlideBoxCtrl.getScrollView = function() {
-            if(!faSlideBoxCtrl.scrollView) {
-                faSlideBoxCtrl.scrollView = $famous.find('fa-scroll-view')[0];
+        yooSlideBoxCtrl.getScrollView = function() {
+            if(!yooSlideBoxCtrl.scrollView) {
+                yooSlideBoxCtrl.scrollView = famousHelper.find('fa-scroll-view')[0];
             }
-            return faSlideBoxCtrl.scrollView;
+            return yooSlideBoxCtrl.scrollView;
+        };
+
+        yooSlideBoxCtrl.getTotalPage = function() {
+            yooSlideBoxCtrl.getScrollView().getTotalPage();
         };
     };
     controller.$inject = controllerDeps;
@@ -28,15 +32,15 @@ module.exports = function(app) {
     var directiveDeps = ['$famous'];
     var directive = function($famous) {
         return {
-            require: ['faSlideBox'],
+            require: ['yooSlideBox'],
             restrict: 'AE',
             scope: {
                 title: '@' // '@' reads attribute value, '=' provides 2-way binding, '&" works with functions
             },
             controller: controller,
-            controllerAs: 'faSlideBoxCtrl',
+            controllerAs: 'yooSlideBoxCtrl',
             bindToController: true,
-            template: require('./faSlideBox.html'),
+            template: require('./yooSlideBox.html'),
             transclude: true,
             compile: function(tElement, tAttrs) {
                 return {
@@ -44,9 +48,8 @@ module.exports = function(app) {
 
                     },
                     post: function(scope, element, attrs, ctrls) {
-                        var faSlideBoxCtrl = ctrls[0];
-
-                        faSlideBoxCtrl.getScrollView().renderNode.sync.addSync(['mouse']);
+                        var yooSlideBoxCtrl = ctrls[0];
+                        yooSlideBoxCtrl.getScrollView().renderNode.sync.addSync(['mouse']);
                     }
                 };
             }

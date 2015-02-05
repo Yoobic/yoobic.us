@@ -2,7 +2,6 @@
 
 module.exports = function(app) {
     // inject:start
-    require('./yooSlide')(app);
-    require('./yooSlideBox')(app);
+    require('./slidebox')(app);
     // inject:end
 };
