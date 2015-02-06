@@ -115,7 +115,7 @@ describe(app.name, function() {
                 var results = this.$famous.find('fa-surface');
                 expect(results.length).toEqual(this.$scope.views.length);
             });
-            
+
             it('should show yoo-pager if show-pager is true', function() {
                 var element = unitHelper.compileDirective.call(this, directivename,
                     '<yoo-slide-box show-pager="true">' +

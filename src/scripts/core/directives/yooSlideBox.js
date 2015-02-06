@@ -63,8 +63,9 @@ module.exports = function(app) {
             transclude: true,
             compile: function(tElement, tAttrs) {
                 return {
-                    pre: function(scope, element, attrs) {
-
+                    pre: function(scope, element, attrs, ctrls) {
+                        var yooSlideBoxCtrl = ctrls[0];
+                        yooSlideBoxCtrl.pages = 0;
                     },
                     post: function(scope, element, attrs, ctrls) {
                         var yooSlideBoxCtrl = ctrls[0];
