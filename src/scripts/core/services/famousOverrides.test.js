@@ -10,7 +10,7 @@ describe(app.name, function() {
 
         describe(servicename, function() {
             var numberOfSurfaces = 10;
-            var waitTime = 300;
+            var waitTime = 500;
             var createSurfaces = function() {
                 var Surface = this.$famous['famous/core/Surface'];
                 var surfaces = [];

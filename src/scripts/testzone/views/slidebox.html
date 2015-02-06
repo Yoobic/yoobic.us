@@ -1,17 +1,22 @@
-<yoo-slide-box>
+<yoo-slide-box on-slide-changed="slideHasChanged($index)">
     <yoo-slide>
-        <div>
-            Hello World!
+        <div class="box blue">
+            <h1>BLUE</h1>
         </div>
     </yoo-slide>
     <yoo-slide>
-        <div>
-            Hello World2!
+        <div class="box yellow">
+            <h1>YELLOW</h1>
         </div>
     </yoo-slide>
     <yoo-slide>
-        <div>
-            Hello World3!
-        </div>
+        <fa-modifier fa-rotate-z="0.8">
+            <fa-surface>
+                <div class="box pink">
+                    <h1>PINK</h1>
+                </div>
+
+            </fa-surface>
+        </fa-modifier>
     </yoo-slide>
 </yoo-slide-box>

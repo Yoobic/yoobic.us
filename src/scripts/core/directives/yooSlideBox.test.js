@@ -4,6 +4,7 @@ var angular = require('angular-mocks');
 var app = require('../')('app');
 var directivename = 'yooSlideBox';
 var unitHelper = require('unitHelper');
+var _ = require('lodash');
 
 describe(app.name, function() {
 
@@ -20,6 +21,7 @@ describe(app.name, function() {
                 this.$compile = $injector.get('$compile');
                 this.$scope = $injector.get('$rootScope').$new();
                 this.$famous = $injector.get('$famous');
+                this.famousHelper = $injector.get(app.name + '.famousHelper');
                 this.$scope.vm = {};
             }));
 
@@ -78,6 +80,42 @@ describe(app.name, function() {
                 expect(scrollview._touchCount).toBe(1);
             });
 
+            it('should work with ng-repeated views', function() {
+                var vm = this.$scope.vm;
+                vm.views = _.range(10);
+                unitHelper.compileDirectiveFamous.call(this, directivename,
+                    '<yoo-slide-box show-pager="true">' +
+                    '<yoo-slide ng-repeat="view in vm.views">' +
+                    '<fa-surface fa-size="[300, 100]"></fa-surface>' +
+                    '</yoo-slide>' +
+                    '</yoo-slide-box>');
+
+                var scrollView = this.$famous.find('fa-scroll-view')[0].renderNode;
+                this.$scope.$digest();
+                expect(scrollView.getTotalPages()).toEqual(vm.views.length);
+            });
+
+            it('should replace html with surfaces', function() {
+                unitHelper.compileDirectiveFamous.call(this, directivename,
+                    '<yoo-slide-box>' +
+                    '<yoo-slide ng-repeat="view in views">' +
+                    '<div>surface{{view}}</div>' +
+                    '</yoo-slide>' +
+                    '</yoo-slide-box>', 300, this.$scope
+                );
+
+                this.$scope.views = [0, 1];
+
+                var scrollView = this.$famous.find('fa-scroll-view')[0].renderNode;
+
+                // The watcher resolves view sequencing
+                expect(scrollView._node).toBeNull();
+                this.$scope.$apply();
+                expect(scrollView._node.index).toBe(0);
+                var results = this.$famous.find('fa-surface');
+                expect(results.length).toEqual(this.$scope.views.length);
+            });
+            
             it('should show yoo-pager if show-pager is true', function() {
                 var element = unitHelper.compileDirective.call(this, directivename,
                     '<yoo-slide-box show-pager="true">' +
