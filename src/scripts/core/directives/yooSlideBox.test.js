@@ -204,8 +204,23 @@ describe(app.name, function() {
 
                 var spy = jasmine.createSpy('fn').and.returnValue(10);
                 Scrollview.prototype.getPageDistance = spy;
-                this.controller.getPageDistance(1);
+                var distance = this.controller.getPageDistance(1);
                 expect(spy).toHaveBeenCalled();
+                expect(distance).toBe(10);
+            });
+
+            it('slideBoxCtrl.getPageDistance() should return index when no scrollview', function() {
+                unitHelper.compileDirectiveFamous.call(this, directivename,
+                    '<yoo-slide-box>' +
+                    '</yoo-slide-box>'
+                );
+                var Scrollview = this.$famous['famous/views/Scrollview'];
+
+                var spy = jasmine.createSpy('fn').and.returnValue(10);
+                this.controller.getScrollview = jasmine.createSpy('getScrollview').and.returnValue(null);
+                Scrollview.prototype.getPageDistance = spy;
+                var distance = this.controller.getPageDistance(10);
+                expect(distance).toBe(10);
             });
 
         });

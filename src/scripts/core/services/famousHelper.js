@@ -26,8 +26,41 @@ module.exports = function(app) {
             }
         };
 
+        /**
+         * Wraps an element with a wrapper
+         * @param  {angular.element} element - The element to wrap
+         * @param  {String|angular.element} wrapper - The wrapper
+         * @example
+         * famousHelper.wrap(element, '<fa-surface></fa-surface>');
+         */
+        var wrapElement = function(element, wrapper) {
+            element[0].innerHTML = (angular.element(wrapper).append(element[0].innerHTML))[0].outerHTML;
+        };
+
+        /**
+         * Performs a manual transclusion
+         * @param  {String|angular.element} template - The template containing the transclusion
+         * @param  {angular.element} element  - The content to transclude
+         * @param  {String} selector - A selector to optionaly decide if the content needs wrapping
+         * @param  {String|angular.element} wrapper  - The wrapper
+         */
+        var manualTransclude = function(template, element, selector, wrapper) {
+            template = angular.element(template);
+            var templateTransclude = template.find('ng-transclude');
+            if(templateTransclude.length <= 0) {
+                throw new Error('Could not find a ng-transclude element in the template');
+            }
+            if(element.find(selector).length === 0) {
+                wrapElement(element, wrapper);
+            }
+            templateTransclude.replaceWith(element[0].innerHTML);
+            element[0].innerHTML = template[0].outerHTML;
+        };
+
         return {
-            find: find
+            find: find,
+            wrapElement: wrapElement,
+            manualTransclude: manualTransclude
         };
 
     }

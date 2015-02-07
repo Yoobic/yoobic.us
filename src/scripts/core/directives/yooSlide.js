@@ -26,10 +26,8 @@ module.exports = function(app) {
             controller: controller,
             controllerAs: 'yooSlideCtrl',
             bindToController: true,
-            //template: require('./yooSlide.html'),
-            //transclude: true,
             compile: function(tElement, tAttrs) {
-                //console.log(tElement);
+                /*
                 var surfaces = tElement.find('fa-surface');
 
                 if(surfaces.length <= 0) {
@@ -40,6 +38,12 @@ module.exports = function(app) {
                 surfaces.attr('class', 'full-height');
 
                 tElement[0].innerHTML = require('./yooSlide.html').replace('<ng-transclude></ng-transclude>', tElement[0].innerHTML);
+                */
+
+                famousHelper.manualTransclude(require('./yooSlide.html'), tElement, 'fa-surface', '<fa-surface></fa-surface>');
+                var surfaces = tElement.find('fa-surface');
+                surfaces.attr('fa-pipe-to', 'yooSlideBoxCtrl.eventHandler');
+                surfaces.attr('class', 'full-height');
 
                 return {
                     pre: function(scope, element, attrs, ctrls) {
@@ -53,21 +57,23 @@ module.exports = function(app) {
                         };
 
                         yooSlideCtrl.translate = $timeline([
-                            [-1, [50, 100]],
+                            [-10, [300, 0]],
+                            [-1, [300, 0]],
                             [0, [0, 0.8]],
-                            [1, [-50, -30]]
+                            [1, [-300, 0]],
+                            [10, [-300, 0]]
                         ]);
 
                         yooSlideCtrl.scale = $timeline([
-                            [-1, [0.7, 0.7]],
-                            [0, [1, 1]],
-                            [1, [0.7, 0.7]]
+                            [-1, [0.1, 0.1]],
+                            [0, [0.3, 0.3]],
+                            [1, [0.1, 0.1]]
                         ]);
 
                         yooSlideCtrl.rotate = $timeline([
-                            [-1, -Math.PI / 10],
+                            [-1, -0 * Math.PI / 10],
                             [0, 0],
-                            [1, Math.PI / 10]
+                            [1, 0 * Math.PI / 10]
                         ]);
                     },
                     post: function(scope, element, attrs, ctrls) {

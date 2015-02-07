@@ -9,8 +9,8 @@ describe(app.name, function() {
     describe('Services', function() {
 
         describe(servicename, function() {
-            var numberOfSurfaces = 10;
-            var waitTime = 500;
+            var numberOfSurfaces = 5;
+            var waitTime = 400;
             var createSurfaces = function() {
                 var Surface = this.$famous['famous/core/Surface'];
                 var surfaces = [];
@@ -88,9 +88,11 @@ describe(app.name, function() {
                 Engine.createContext().add(modifier).add(scrollview);
 
                 scrollview.goToLast();
+
                 setTimeout(function() {
                     var absolutePosition = scrollview.getAbsolutePosition();
-                    expect(absolutePosition > 850).toBeTruthy();
+
+                    expect(absolutePosition >= (numberOfSurfaces - 1.5) * 100).toBeTruthy();
                     done();
                 }, waitTime);
 
