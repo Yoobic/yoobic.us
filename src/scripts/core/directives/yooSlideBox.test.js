@@ -70,12 +70,10 @@ describe(app.name, function() {
                 );
 
                 var scrollview = this.$famous.find('fa-scroll-view')[0].renderNode;
-                var surface = this.$famous.find('fa-surface')[0].renderNode;
+                var surfaceElement = this.$famous.find('fa-surface')[0];
 
                 expect(scrollview._touchCount).toBe(0);
-                surface._eventOutput.emit('mousedown', unitHelper.mockEvent({
-                    count: 1
-                }));
+                unitHelper.triggerEventFamousElement(surfaceElement, 'mousedown');
 
                 expect(scrollview._touchCount).toBe(1);
             });
@@ -223,6 +221,22 @@ describe(app.name, function() {
                 expect(distance).toBe(10);
             });
 
+            it('slideBoxCtrl.goToPage() should call the famo.us Scrollview', function() {
+                unitHelper.compileDirectiveFamous.call(this, directivename,
+                    '<yoo-slide-box>' +
+                    '<yoo-slide>' + '</yoo-slide>' +
+                    '<yoo-slide>' + '</yoo-slide>' +
+                    '<yoo-slide>' + '</yoo-slide>' +
+                    '</yoo-slide-box>'
+                );
+                var Scrollview = this.$famous['famous/views/Scrollview'];
+
+                spyOn(Scrollview.prototype, 'goToPage');
+
+                this.controller.goToPage(2);
+
+                expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(2);
+            });
         });
     });
 });

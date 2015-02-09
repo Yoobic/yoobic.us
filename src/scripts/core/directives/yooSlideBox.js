@@ -42,6 +42,12 @@ module.exports = function(app) {
             }
         };
 
+        yooSlideBoxCtrl.goToPage = function(index) {
+            if(yooSlideBoxCtrl.getScrollview()) {
+                yooSlideBoxCtrl.getScrollview().renderNode.goToPage(index);
+            }
+        };
+
     };
     controller.$inject = controllerDeps;
 

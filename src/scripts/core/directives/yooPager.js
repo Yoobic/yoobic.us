@@ -5,12 +5,14 @@ var _ = require('lodash');
 module.exports = function(app) {
 
     // controller
-    var controllerDeps = [];
-    var controller = function() {
+    var controllerDeps = ['$scope'];
+    var controller = function($scope) {
         var yooPagerCtrl = this;
         yooPagerCtrl.directivename = directivename;
         yooPagerCtrl.slidesRange = [];
-
+        yooPagerCtrl.goToPage = function(index) {
+            $scope.yooSlideBoxCtrl.goToPage(index);
+        };
     };
     controller.$inject = controllerDeps;
 
@@ -22,9 +24,7 @@ module.exports = function(app) {
         return {
             require: ['yooPager', '^yooSlideBox'],
             restrict: 'AE',
-            scope: {
-                title: '@' // '@' reads attribute value, '=' provides 2-way binding, '&" works with functions
-            },
+            scope: {},
             controller: controller,
             controllerAs: 'yooPagerCtrl',
             bindToController: true,

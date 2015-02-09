@@ -14,23 +14,21 @@ exports.compileDirective = function(directivename, html) {
     var element = jQLite(html);
     this.$compile(element)(this.$scope);
     this.$scope.$digest();
-    this.controller = element.controller(directivename);
-    this.scope = element.isolateScope() || element.scope();
+    this.directive = element.find(camelToDash(directivename));
+    this.controller = this.directive.controller(directivename);
+    this.scope = this.directive.isolateScope() || this.directive.scope();
     return element;
 };
 
 exports.compileDirectiveFamous = function(directivename, html, height) {
-
     height = height || 100;
-
     var element = jQLite('<fa-app style="height: ' + height + 'px">' + html + '</fa-app>');
     document.body.appendChild(element[0]);
     this.$compile(element)(this.$scope);
+    this.$scope.$digest();
     this.directive = element.find(camelToDash(directivename));
     this.controller = this.directive.controller(directivename);
     this.scope = this.directive.isolateScope() || this.directive.scope();
-    this.$scope.$digest();
-
     return element;
 };
 
@@ -43,4 +41,13 @@ exports.cleanDocument = function() {
 
 exports.mockEvent = function(eventData) {
     return new CustomEvent('mock', eventData || {});
+};
+
+exports.triggerEventFamousElement = function(element, eventName) {
+    if(!element.renderNode) {
+        throw new Error('The element does not seems to be a famous element, consider using famousHelper.getFamousElement');
+    }
+    element.renderNode._eventOutput.emit(eventName, exports.mockEvent({
+        count: 1
+    }));
 };

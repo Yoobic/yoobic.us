@@ -66,6 +66,19 @@ describe(app.name, function() {
                 });
             });
 
+            describe('#getFamousElement()', function() {
+                it('should succeed', function() {
+                    var element = unitHelper.compileDirectiveFamous.call(this, '',
+                        '<fa-surface></fa-surface>' +
+                        '<fa-surface></fa-surface>'
+                    );
+                    var surfaceElement = element.find('fa-surface');
+                    expect(surfaceElement.renderNode).toBeUndefined();
+                    var surface = this.service.getFamousElement(surfaceElement);
+                    expect(surface.renderNode).toBeDefined();
+                });
+            });
+
             describe('#manualTransclude()', function() {
                 it('should succeed when no selector found', function() {
 

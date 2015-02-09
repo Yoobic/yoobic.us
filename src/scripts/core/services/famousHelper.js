@@ -7,6 +7,12 @@ module.exports = function(app) {
     var dependencies = ['$famous'];
 
     function service($famous) {
+
+        var getFamousElement = function(element) {
+            var scope = angular.element(element).scope();
+            return scope.isolate[scope.$id];
+        };
+
         /**
          * Find famous elements
          * @param  {String} selector  - The selector (tag, id, class)
@@ -16,10 +22,8 @@ module.exports = function(app) {
         var find = function(selector, element) {
             if(element) {
                 var searchElements = element.find(selector);
-                return angular.element(_(searchElements).map(function(el) {
-                    var scope = angular.element(el).scope();
-                    return scope.isolate[scope.$id];
-                }).value());
+                return angular.element(_(searchElements)
+                    .map(getFamousElement).value());
 
             } else {
                 return $famous.find(selector);
@@ -59,6 +63,7 @@ module.exports = function(app) {
 
         return {
             find: find,
+            getFamousElement: getFamousElement,
             wrapElement: wrapElement,
             manualTransclude: manualTransclude
         };
