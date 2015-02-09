@@ -22,11 +22,9 @@ describe(app.name, function() {
             }));
 
             it('should require yooSlideBox', function() {
-                var self = this;
                 expect(function() {
-                    var element = unitHelper.compileDirective.call(self, directivename, '<yoo-slide></yoo-slide>');
-                    element.html();
-                }).toThrowError();
+                    unitHelper.compileDirective.call(this, directivename, '<yoo-slide></yoo-slide>');
+                }.bind(this)).toThrowError();
             });
 
         });

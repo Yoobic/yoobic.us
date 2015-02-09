@@ -11,6 +11,7 @@ var gmux = require('gulp-mux');
 var exec = require('child_process').exec;
 var constants = require('../common/constants')();
 var helper = require('../common/helper');
+var args = require('yargs').argv;
 
 var taskBrowsersyncstart = function(constants) {
     var dest = constants.dist.distFolder;
@@ -32,7 +33,7 @@ var taskBrowsersyncstart = function(constants) {
         port: constants.serve.port,
         logLevel: 'info', // info, debug , silent
         open: constants.serve.open,
-        browser: constants.serve.browser, //['google chrome'], // ['google chrome', 'firefox'],
+        browser: args.nobrowser ? args.nobrowser : constants.serve.browser, //['google chrome'], // ['google chrome', 'firefox'],
         notify: true,
         logConnections: false
     };

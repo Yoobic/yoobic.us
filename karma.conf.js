@@ -7,7 +7,7 @@ var browserify = {
     debug: true,
     transform: [
         [{
-            ignore: ['**/*.test.js', '**/*.html', '**/bower_components/**', '**/node_modules/**']
+            ignore: ['**/*.test.js', '**/*.html', '**/bower_components/**', '**/node_modules/**', '**/testzone/**']
         }, 'browserify-istanbul']
     ]
 };

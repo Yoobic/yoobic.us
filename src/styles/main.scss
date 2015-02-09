@@ -1,3 +1,5 @@
+@import "../../bower_components/ionic/scss/ionic.scss";
+
 .full-screen {
     position: fixed;
     bottom: 0;
@@ -11,3 +13,7 @@
 .full-width, .full-width .fa-surface {
     width: 100%
 }
+
+@import
+	"yoo-slide-box",
+	"./testzone.scss";

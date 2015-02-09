@@ -1,5 +1,7 @@
-<fa-modifier>
-    <fa-surface fa-background-color="'red'"  fa-pipe-to="yooSlideBoxCtrl.eventHandler">
-        <ng-transclude></ng-transclude>
-    </fa-surface>
+<fa-modifier fa-translate="yooSlideCtrl.translate(yooSlideCtrl.getPageDistance())">
+    <fa-modifier fa-rotate-z="yooSlideCtrl.rotate(yooSlideCtrl.getPageDistance())" fa-origin="[0.5, 0.5]" fa-align="[0.5, 0.5]">
+        <fa-modifier fa-scale="yooSlideCtrl.scale(yooSlideCtrl.getPageDistance())" fa-origin="[0.5, 0.5]" fa-align="[0.5, 0.5]">
+            <ng-transclude></ng-transclude>
+        </fa-modifier>
+    </fa-modifier>
 </fa-modifier>
