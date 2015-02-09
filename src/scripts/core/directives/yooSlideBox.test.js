@@ -184,10 +184,9 @@ describe(app.name, function() {
                 );
                 var Scrollview = this.$famous['famous/views/Scrollview'];
 
-                var spy = jasmine.createSpy('fn').and.returnValue(10);
-                Scrollview.prototype.getTotalPages = spy;
+                spyOn(Scrollview.prototype, 'getTotalPages').and.returnValue(10);
                 this.controller.getTotalPages();
-                expect(spy).toHaveBeenCalled();
+                expect(Scrollview.prototype.getTotalPages).toHaveBeenCalled();
             });
 
             it('slideBoxCtrl.getPageDistance() should succeed', function() {
@@ -200,10 +199,9 @@ describe(app.name, function() {
                 );
                 var Scrollview = this.$famous['famous/views/Scrollview'];
 
-                var spy = jasmine.createSpy('fn').and.returnValue(10);
-                Scrollview.prototype.getPageDistance = spy;
+                spyOn(Scrollview.prototype, 'getPageDistance').and.returnValue(10);
                 var distance = this.controller.getPageDistance(1);
-                expect(spy).toHaveBeenCalled();
+                expect(Scrollview.prototype.getPageDistance).toHaveBeenCalled();
                 expect(distance).toBe(10);
             });
 
@@ -214,9 +212,9 @@ describe(app.name, function() {
                 );
                 var Scrollview = this.$famous['famous/views/Scrollview'];
 
-                var spy = jasmine.createSpy('fn').and.returnValue(10);
-                this.controller.getScrollview = jasmine.createSpy('getScrollview').and.returnValue(null);
-                Scrollview.prototype.getPageDistance = spy;
+                spyOn(Scrollview.prototype, 'getPageDistance').and.returnValue(10);
+                spyOn(this.controller, 'getScrollview').and.returnValue(null);
+
                 var distance = this.controller.getPageDistance(10);
                 expect(distance).toBe(10);
             });
