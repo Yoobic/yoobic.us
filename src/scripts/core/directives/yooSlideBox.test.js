@@ -235,6 +235,77 @@ describe(app.name, function() {
 
                 expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(2);
             });
+
+            describe('slideBox delegate service', function() {
+                beforeEach(inject(function($injector) {
+                    this.slideBoxDelegate = $injector.get(app.name + '.slideBoxDelegate');
+                }));
+
+                it('slideBoxDelegate.goToPage() should call directives goToPage method from another controller', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+
+                    spyOn(this.controller, 'goToPage');
+                    var index = 2;
+                    this.slideBoxDelegate.goToPage(index);
+                    expect(this.controller.goToPage).toHaveBeenCalledWith(index);
+                });
+
+                it('slideBoxDelegate should deregister on $destory', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+
+                    expect(this.slideBoxDelegate._instances.length).toBe(1);
+                    this.$scope.$destroy();
+                    expect(this.slideBoxDelegate._instances.length).toBe(0);
+                });
+
+                it('slideBoxDelegate should call methods by their handle', function() {
+                    var element = unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box delegate-handle="handle-a" id="directive-a">' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>' +
+                        '<yoo-slide-box id="directive-b">' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+
+                    var directiveA = angular.element(element[0].querySelector('#directive-a'));
+                    var directiveACtrl = directiveA.controller('yooSlideBox');
+                    var directiveB = angular.element(element[0].querySelector('#directive-b'));
+                    var directiveBCtrl = directiveB.controller('yooSlideBox');
+
+                    spyOn(directiveACtrl, 'goToPage');
+                    spyOn(directiveBCtrl, 'goToPage');
+
+                    var index = 2;
+                    this.slideBoxDelegate.goToPage(index);
+
+                    expect(directiveACtrl.goToPage).toHaveBeenCalled();
+                    expect(directiveBCtrl.goToPage).toHaveBeenCalled();
+
+                    directiveACtrl.goToPage.calls.reset();
+                    directiveBCtrl.goToPage.calls.reset();
+                    this.slideBoxDelegate.$getByHandle('handle-a').goToPage(index);
+
+                    expect(directiveACtrl.goToPage).toHaveBeenCalled();
+                    expect(directiveBCtrl.goToPage).not.toHaveBeenCalled();
+                });
+            });
         });
     });
 });
