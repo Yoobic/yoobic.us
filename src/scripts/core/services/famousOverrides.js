@@ -37,10 +37,14 @@ module.exports = function(app) {
                 return this._scroller._contextSize;
             };
 
+            Scrollview.prototype.getContainerLength = function() {
+                return this.getContainerSize()[this.options.direction || 0];
+            };
+
             Scrollview.prototype.getPageDistance = function(index) {
                 var retVal = index;
 
-                var length = this.getContainerSize()[this.options.direction || 0];
+                var length = this.getContainerLength();
                 try {
                     retVal = index - this.getAbsolutePosition() / length;
                 } catch(err) {}

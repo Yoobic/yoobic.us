@@ -15,6 +15,9 @@ exports.compileDirective = function(directivename, html) {
     this.$compile(element)(this.$scope);
     this.$scope.$digest();
     this.directive = element.find(camelToDash(directivename));
+    if(this.directive.length === 0) {
+        this.directive = element;
+    }
     this.controller = this.directive.controller(directivename);
     this.scope = this.directive.isolateScope() || this.directive.scope();
     return element;

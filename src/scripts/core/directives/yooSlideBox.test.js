@@ -161,87 +161,113 @@ describe(app.name, function() {
 
             });
 
-            it('slideBoxCtrl.getScrollview() should succeed', function() {
-                unitHelper.compileDirectiveFamous.call(this, directivename,
-                    '<yoo-slide-box>' +
-                    '<yoo-slide>' +
-                    '<div class="test"></div>' +
-                    '</yoo-slide>' +
-                    '</yoo-slide-box>'
-                );
-                var Scrollview = this.$famous['famous/views/Scrollview'];
-                var scrollview = this.controller.getScrollview();
-                expect(scrollview.renderNode instanceof Scrollview).toBeTruthy();
+            it('should one-way bind to animation-type', function() {
+                var vm = this.$scope.vm;
+                vm.animationType = 'animation1';
+                unitHelper.compileDirective.call(this, directivename,
+                    '<yoo-slide-box animation-type="{{vm.animationType}}">' +
+                    '   <yoo-slide>' +
+                    '      <div class="test"></div>' +
+                    '   </yoo-slide>' +
+                    '   <yoo-slide>' +
+                    '      <div class="test"></div>' +
+                    '   </yoo-slide>' +
+                    '</yoo-slide-box>');
+
+                spyOn(this.controller, 'setAnimation').and.callThrough();
+
+                vm.animationType = 'animation2';
+                this.$scope.$digest();
+                expect(this.controller.setAnimation).toHaveBeenCalled();
+                expect(this.controller.setAnimation.calls.argsFor(0)).toEqual([vm.animationType]);
+
             });
 
-            it('slideBoxCtrl.getTotalPages() should succeed', function() {
-                unitHelper.compileDirectiveFamous.call(this, directivename,
-                    '<yoo-slide-box>' +
-                    '<yoo-slide>' +
-                    '<div class="test"></div>' +
-                    '</yoo-slide>' +
-                    '</yoo-slide-box>'
-                );
-                var Scrollview = this.$famous['famous/views/Scrollview'];
+            describe('slideBoxCtrl', function() {
 
-                spyOn(Scrollview.prototype, 'getTotalPages').and.returnValue(10);
-                this.controller.getTotalPages();
-                expect(Scrollview.prototype.getTotalPages).toHaveBeenCalled();
+                it('#getScrollview() should succeed', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' +
+                        '<div class="test"></div>' +
+                        '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+                    var Scrollview = this.$famous['famous/views/Scrollview'];
+                    var scrollview = this.controller.getScrollview();
+                    expect(scrollview.renderNode instanceof Scrollview).toBeTruthy();
+                });
+
+                it('#getTotalPages() should succeed', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' +
+                        '<div class="test"></div>' +
+                        '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+                    var Scrollview = this.$famous['famous/views/Scrollview'];
+
+                    spyOn(Scrollview.prototype, 'getTotalPages').and.returnValue(10);
+                    this.controller.getTotalPages();
+                    expect(Scrollview.prototype.getTotalPages).toHaveBeenCalled();
+                });
+
+                it('#getPageDistance() should succeed', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' +
+                        '<div class="test"></div>' +
+                        '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+                    var Scrollview = this.$famous['famous/views/Scrollview'];
+
+                    spyOn(Scrollview.prototype, 'getPageDistance').and.returnValue(10);
+                    var distance = this.controller.getPageDistance(1);
+                    expect(Scrollview.prototype.getPageDistance).toHaveBeenCalled();
+                    expect(distance).toBe(10);
+                });
+
+                it('#getPageDistance() should return index when no scrollview', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '</yoo-slide-box>'
+                    );
+                    var Scrollview = this.$famous['famous/views/Scrollview'];
+
+                    spyOn(Scrollview.prototype, 'getPageDistance').and.returnValue(10);
+                    spyOn(this.controller, 'getScrollview').and.returnValue(null);
+
+                    var distance = this.controller.getPageDistance(10);
+                    expect(distance).toBe(10);
+                });
+
+                it('#goToPage() should call the famo.us Scrollview', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+                    var Scrollview = this.$famous['famous/views/Scrollview'];
+
+                    spyOn(Scrollview.prototype, 'goToPage');
+
+                    this.controller.goToPage(2);
+
+                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(2);
+                });
+
             });
 
-            it('slideBoxCtrl.getPageDistance() should succeed', function() {
-                unitHelper.compileDirectiveFamous.call(this, directivename,
-                    '<yoo-slide-box>' +
-                    '<yoo-slide>' +
-                    '<div class="test"></div>' +
-                    '</yoo-slide>' +
-                    '</yoo-slide-box>'
-                );
-                var Scrollview = this.$famous['famous/views/Scrollview'];
-
-                spyOn(Scrollview.prototype, 'getPageDistance').and.returnValue(10);
-                var distance = this.controller.getPageDistance(1);
-                expect(Scrollview.prototype.getPageDistance).toHaveBeenCalled();
-                expect(distance).toBe(10);
-            });
-
-            it('slideBoxCtrl.getPageDistance() should return index when no scrollview', function() {
-                unitHelper.compileDirectiveFamous.call(this, directivename,
-                    '<yoo-slide-box>' +
-                    '</yoo-slide-box>'
-                );
-                var Scrollview = this.$famous['famous/views/Scrollview'];
-
-                spyOn(Scrollview.prototype, 'getPageDistance').and.returnValue(10);
-                spyOn(this.controller, 'getScrollview').and.returnValue(null);
-
-                var distance = this.controller.getPageDistance(10);
-                expect(distance).toBe(10);
-            });
-
-            it('slideBoxCtrl.goToPage() should call the famo.us Scrollview', function() {
-                unitHelper.compileDirectiveFamous.call(this, directivename,
-                    '<yoo-slide-box>' +
-                    '<yoo-slide>' + '</yoo-slide>' +
-                    '<yoo-slide>' + '</yoo-slide>' +
-                    '<yoo-slide>' + '</yoo-slide>' +
-                    '</yoo-slide-box>'
-                );
-                var Scrollview = this.$famous['famous/views/Scrollview'];
-
-                spyOn(Scrollview.prototype, 'goToPage');
-
-                this.controller.goToPage(2);
-
-                expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(2);
-            });
-
-            describe('slideBox delegate service', function() {
+            describe('slideBoxDelegate', function() {
                 beforeEach(inject(function($injector) {
                     this.slideBoxDelegate = $injector.get(app.name + '.slideBoxDelegate');
                 }));
 
-                it('slideBoxDelegate.goToPage() should call directives goToPage method from another controller', function() {
+                it('#goToPage() should call directives goToPage method from another controller', function() {
                     unitHelper.compileDirectiveFamous.call(this, directivename,
                         '<yoo-slide-box>' +
                         '<yoo-slide>' + '</yoo-slide>' +
@@ -256,7 +282,7 @@ describe(app.name, function() {
                     expect(this.controller.goToPage).toHaveBeenCalledWith(index);
                 });
 
-                it('slideBoxDelegate should deregister on $destory', function() {
+                it('should deregister on $destory', function() {
                     unitHelper.compileDirectiveFamous.call(this, directivename,
                         '<yoo-slide-box>' +
                         '<yoo-slide>' + '</yoo-slide>' +
@@ -270,7 +296,7 @@ describe(app.name, function() {
                     expect(this.slideBoxDelegate._instances.length).toBe(0);
                 });
 
-                it('slideBoxDelegate should call methods by their handle', function() {
+                it('should call slideBox by their handle', function() {
                     var element = unitHelper.compileDirectiveFamous.call(this, directivename,
                         '<yoo-slide-box delegate-handle="handle-a" id="directive-a">' +
                         '<yoo-slide>' + '</yoo-slide>' +

@@ -1,22 +1,49 @@
-<yoo-slide-box on-slide-changed="slideHasChanged($index)" show-pager="true">
-    <yoo-slide>
-        <div class="box blue">
-            <h1>BLUE</h1>
-        </div>
-    </yoo-slide>
-    <yoo-slide>
-        <div class="box yellow">
-            <h1>YELLOW</h1>
-        </div>
-    </yoo-slide>
-    <yoo-slide>
-        <fa-modifier fa-rotate-z="0.8">
-            <fa-surface>
+<fa-view>
+    <fa-header-footer-layout fa-options="{headerSize:0, footerSize: 75}">
+        <fa-modifier>
+            <fa-surface fa-background-color="'white'">
+                
+            </fa-surface>
+        </fa-modifier>
+        <yoo-slide-box on-slide-changed="slideHasChanged($index)" show-pager="true" animation-type="animation1">
+            <yoo-slide>
+                <div class="box blue">
+                    <h1>BLUE</h1>
+                </div>
+            </yoo-slide>
+            <yoo-slide>
+                <div class="box yellow">
+                    <h1>YELLOW</h1>
+                </div>
+            </yoo-slide>
+            <yoo-slide>
                 <div class="box pink">
                     <h1>PINK</h1>
                 </div>
+            </yoo-slide>
+            <yoo-slide>
+                <div class="box red">
+                    <h1>RED</h1>
+                </div>
+            </yoo-slide>
+            <yoo-slide>
+                <div class="box green">
+                    <h1>GREEN</h1>
+                </div>
+            </yoo-slide>
+            <yoo-slide>
+                <div class="box purple">
+                    <h1>PURPLE</h1>
+                </div>
+            </yoo-slide>
+        </yoo-slide-box>
 
-            </fa-surface>
+        <fa-modifier fa-size="[undefined,100]">
+            <fa-modifier fa-origin="[0.5,0.5]" fa-align="[0.5,0.5]" fa-size="[56,54]">
+                <fa-surface>
+                    <button class="button button-assertive" ng-click="vm.goToPage(3)">Click</button>
+                </fa-surface>
+            </fa-modifier>
         </fa-modifier>
-    </yoo-slide>
-</yoo-slide-box>
+    </fa-header-footer-layout>
+</fa-view>

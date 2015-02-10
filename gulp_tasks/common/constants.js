@@ -79,7 +79,7 @@ module.exports = function() {
         serve: {
             host: 'localhost', //'0.0.0.0',
             port: 5000,
-            open: true,
+            open: false,
             browser: ['google chrome'], // ['google chrome', 'firefox'],
             localtunnel: false // true, false or 'angular-core'
         },

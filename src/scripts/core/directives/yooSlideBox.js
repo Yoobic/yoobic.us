@@ -5,8 +5,9 @@ var directivename = 'yooSlideBox';
 module.exports = function(app) {
 
     // controller
-    var controllerDeps = ['$famous', app.name + '.famousHelper'];
-    var controller = function($famous, famousHelper) {
+    var controllerDeps = ['$famous', '$timeline', app.name + '.famousHelper'];
+    var controller = function($famous, $timeline, famousHelper) {
+
         var yooSlideBoxCtrl = this;
         yooSlideBoxCtrl.directivename = directivename;
 
@@ -23,6 +24,14 @@ module.exports = function(app) {
         yooSlideBoxCtrl.getTotalPages = function() {
             if(yooSlideBoxCtrl.getScrollview()) {
                 return yooSlideBoxCtrl.getScrollview().renderNode.getTotalPages();
+            } else {
+                return 0;
+            }
+        };
+
+        yooSlideBoxCtrl.getContainerLength = function() {
+            if(yooSlideBoxCtrl.getScrollview()) {
+                return yooSlideBoxCtrl.getScrollview().renderNode.getContainerLength() || 0;
             } else {
                 return 0;
             }
@@ -48,6 +57,68 @@ module.exports = function(app) {
             }
         };
 
+        yooSlideBoxCtrl.setAnimation = function(animationType, size) {
+            switch(animationType) {
+                case 'animation1':
+                    //var size = yooSlideBoxCtrl.getContainerLength();
+
+                    yooSlideBoxCtrl.slideTranslate = $timeline([
+                        [-1, [-50, 30]],
+                        [0, [0, 30]],
+                        [10, [-size * 10, -35 * 10]]
+                    ]);
+
+                    yooSlideBoxCtrl.slideScale = $timeline([
+                        [-1, [1, 1]],
+                        [0, [1, 1]],
+                        [10, [0.1, 0.1]]
+                    ]);
+                    break;
+
+                case 'animation2':
+                    yooSlideBoxCtrl.slideTranslate = $timeline([
+                        [-1, [-40, 100]],
+                        [0, [0, 0]],
+                        [1, [60, 0]]
+                    ]);
+
+                    yooSlideBoxCtrl.slideScale = $timeline([
+                        [-1, [0.7, 0.7]],
+                        [0, [0.8, 0.8]],
+                        [1, [0.7, 0.7]]
+                    ]);
+
+                    yooSlideBoxCtrl.slideOpacity = $timeline([
+                        [-1, 0.4],
+                        [0, 1],
+                        [1, 0.4]
+                    ]);
+
+                    yooSlideBoxCtrl.slideRotate = $timeline([
+                        [-1, -Math.PI / 10],
+                        [0, 0],
+                        [1, Math.PI / 10]
+                    ]);
+                    break;
+
+                default:
+                    yooSlideBoxCtrl.slideTranslate = $timeline([
+                        [-1, [-4, 0]],
+                        [0, [0, 0]],
+                        [1, [4, 0]]
+                    ]);
+
+                    yooSlideBoxCtrl.slideScale = $timeline([
+                        [0, [1, 1]]
+                    ]);
+
+                    yooSlideBoxCtrl.slideRotate = $timeline([
+                        [0, 0]
+                    ]);
+                    break;
+            }
+        };
+
     };
     controller.$inject = controllerDeps;
 
@@ -60,7 +131,8 @@ module.exports = function(app) {
             require: ['yooSlideBox'],
             restrict: 'AE',
             scope: {
-                showPager: '='
+                showPager: '=',
+                animationType: '@'
             },
             controller: controller,
             controllerAs: 'yooSlideBoxCtrl',
@@ -84,6 +156,20 @@ module.exports = function(app) {
                     post: function(scope, element, attrs, ctrls) {
                         var yooSlideBoxCtrl = ctrls[0];
                         yooSlideBoxCtrl.setMouseSync();
+
+                        // attrs.$observe('animationType', function(animationType) {
+                        //     yooSlideBoxCtrl.setAnimation(animationType);
+                        // });
+
+                        scope.$watch('yooSlideBoxCtrl.animationType', function(animationType) {
+                            yooSlideBoxCtrl.setAnimation(animationType);
+                        });
+
+                        scope.$watch(function() {
+                            return yooSlideBoxCtrl.getContainerLength();
+                        }, function(size) {
+                            yooSlideBoxCtrl.setAnimation(yooSlideBoxCtrl.animationType, size);
+                        });
 
                     }
                 };

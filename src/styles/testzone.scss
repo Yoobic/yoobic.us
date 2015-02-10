@@ -1,10 +1,16 @@
 .box {
-    text-align:center;
-    width:100%;
-    height:100%
-} 
-
-
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    box-shadow: 4px 4px 2px #888888;
+    border-radius: 4px;
+    display: table;
+    h1 {
+        color: white;
+        display: table-cell;
+        vertical-align: middle;
+    }
+}
 .blue {
     background-color: blue;
 }
@@ -12,6 +18,14 @@
     background-color: yellow;
 }
 .pink {
-    color:pink;
     background-color: pink;
+}
+.red {
+    background-color: red;
+}
+.purple {
+    background-color: purple;
+}
+.green {
+    background-color: green;
 }

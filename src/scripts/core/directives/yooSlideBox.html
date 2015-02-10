@@ -1,4 +1,6 @@
-<fa-scroll-view fa-options="{direction:0, paginated:true}" fa-pipe-from="yooSlideBoxCtrl.eventHandler">
-    <ng-transclude></ng-transclude>
-</fa-scroll-view>
-<yoo-pager ng-if="yooSlideBoxCtrl.showPager"></yoo-pager>
+<fa-view>
+    <fa-scroll-view fa-options="{direction:0, paginated:true, pagePeriod:300, pageDamp:0.4}" fa-pipe-from="yooSlideBoxCtrl.eventHandler">
+        <ng-transclude></ng-transclude>
+    </fa-scroll-view>
+    <yoo-pager ng-if="yooSlideBoxCtrl.showPager"></yoo-pager>
+</fa-view>
