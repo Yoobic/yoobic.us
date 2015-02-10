@@ -256,6 +256,20 @@ describe(app.name, function() {
                     expect(this.controller.goToPage).toHaveBeenCalledWith(index);
                 });
 
+                it('slideBoxDelegate should deregister on $destory', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+
+                    expect(this.slideBoxDelegate._instances.length).toBe(1);
+                    this.$scope.$destroy();
+                    expect(this.slideBoxDelegate._instances.length).toBe(0);
+                });
+
                 it('slideBoxDelegate should call methods by their handle', function() {
                     var element = unitHelper.compileDirectiveFamous.call(this, directivename,
                         '<yoo-slide-box delegate-handle="handle-a" id="directive-a">' +
