@@ -54,8 +54,8 @@ module.exports = function(app) {
     /*eslint-disable consistent-this */
 
     // directive
-    var directiveDeps = ['$famous'];
-    var directive = function($famous) {
+    var directiveDeps = ['$famous', app.name + '.slideBoxDelegate'];
+    var directive = function($famous, $slideBoxDelegate) {
         return {
             require: ['yooSlideBox'],
             restrict: 'AE',
@@ -72,6 +72,14 @@ module.exports = function(app) {
                     pre: function(scope, element, attrs, ctrls) {
                         var yooSlideBoxCtrl = ctrls[0];
                         yooSlideBoxCtrl.pages = 0;
+
+                        var deregisterInstance = $slideBoxDelegate._registerInstance(
+                            yooSlideBoxCtrl, attrs.delegateHandle
+                        );
+
+                        scope.$on('$destroy', function() {
+                            deregisterInstance();
+                        });
                     },
                     post: function(scope, element, attrs, ctrls) {
                         var yooSlideBoxCtrl = ctrls[0];
