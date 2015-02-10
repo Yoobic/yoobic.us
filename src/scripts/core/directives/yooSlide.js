@@ -44,7 +44,7 @@ module.exports = function(app) {
                 var surfaces = tElement.find('fa-surface');
                 surfaces.attr('fa-pipe-to', 'yooSlideBoxCtrl.eventHandler');
                 surfaces.attr('class', 'full-height');
-
+                surfaces.attr('fa-z-index', 'yooSlideBoxCtrl.pages - yooSlideCtrl.pageIndex');
                 return {
                     pre: function(scope, element, attrs, ctrls) {
                         // copying parent controller on the local scope, so we have easy access in the template

@@ -1,6 +1,6 @@
-<fa-modifier fa-translate="yooSlideCtrl.translate(yooSlideCtrl.getPageDistance())">
-    <fa-modifier fa-rotate-z="yooSlideCtrl.rotate(yooSlideCtrl.getPageDistance())" fa-origin="[0.5, 0.5]" fa-align="[0.5, 0.5]">
-        <fa-modifier fa-scale="yooSlideCtrl.scale(yooSlideCtrl.getPageDistance())" fa-origin="[0.5, 0.5]" fa-align="[0.5, 0.5]">
+<fa-modifier fa-translate="yooSlideBoxCtrl.slideTranslate(yooSlideCtrl.getPageDistance())" fa-opacity="yooSlideBoxCtrl.slideOpacity(yooSlideCtrl.getPageDistance())">
+    <fa-modifier fa-rotate-z="yooSlideBoxCtrl.slideRotate(yooSlideCtrl.getPageDistance())" fa-origin="[0.5, 0.5]" fa-align="[0.5, 0.5]">
+        <fa-modifier fa-scale="yooSlideBoxCtrl.slideScale(yooSlideCtrl.getPageDistance())" fa-origin="[0.5, 0.5]" fa-align="[0.5, 0.5]">
             <ng-transclude></ng-transclude>
         </fa-modifier>
     </fa-modifier>
