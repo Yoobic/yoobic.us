@@ -10,7 +10,7 @@ module.exports = function(app) {
         var vm = this;
         vm.message = 'Hello World';
         vm.goToPage = function(index) {
-            slideBoxDelegate.$getHandle('myslidebox').goToPage(index);
+            slideBoxDelegate.$getByHandle('myslidebox').goToPage(index);
         };
 
         vm.animations = ['animation1', 'animation2', 'standard'];
