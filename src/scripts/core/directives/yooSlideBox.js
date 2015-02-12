@@ -73,6 +73,14 @@ module.exports = function(app) {
                         [0, [1, 1]],
                         [10, [0.1, 0.1]]
                     ]);
+
+                    yooSlideBoxCtrl.slideRotate = $timeline([
+                        [0, 0]
+                    ]);
+
+                    yooSlideBoxCtrl.slideOpacity = $timeline([
+                        [0, 1]
+                    ]);
                     break;
 
                 case 'animation2':
@@ -114,6 +122,10 @@ module.exports = function(app) {
 
                     yooSlideBoxCtrl.slideRotate = $timeline([
                         [0, 0]
+                    ]);
+
+                    yooSlideBoxCtrl.slideOpacity = $timeline([
+                        [0, 1]
                     ]);
                     break;
             }
@@ -162,7 +174,7 @@ module.exports = function(app) {
                         // });
 
                         scope.$watch('yooSlideBoxCtrl.animationType', function(animationType) {
-                            yooSlideBoxCtrl.setAnimation(animationType);
+                            yooSlideBoxCtrl.setAnimation(animationType, yooSlideBoxCtrl.getContainerLength());
                         });
 
                         scope.$watch(function() {

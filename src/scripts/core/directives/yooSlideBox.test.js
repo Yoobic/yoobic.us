@@ -179,7 +179,7 @@ describe(app.name, function() {
                 vm.animationType = 'animation2';
                 this.$scope.$digest();
                 expect(this.controller.setAnimation).toHaveBeenCalled();
-                expect(this.controller.setAnimation.calls.argsFor(0)).toEqual([vm.animationType]);
+                expect(this.controller.setAnimation.calls.argsFor(0)).toEqual([vm.animationType, 0]);
 
             });
 
