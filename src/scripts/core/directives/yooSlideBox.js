@@ -21,10 +21,25 @@ module.exports = function(app) {
             return yooSlideBoxCtrl.scrollview;
         };
 
+        /**********Exposed ScrollView Functions**********/
+
         yooSlideBoxCtrl.getTotalPages = function() {
             if(yooSlideBoxCtrl.getScrollview()) {
                 return yooSlideBoxCtrl.getScrollview().renderNode.getTotalPages();
             } else {
+                return 0;
+            }
+        };
+
+        yooSlideBoxCtrl.getCurrentIndex = function() {
+            try {
+                if(yooSlideBoxCtrl.getScrollview()) {
+                    return yooSlideBoxCtrl.getScrollview().renderNode.getCurrentIndex();
+                } else {
+                    return 0;
+                }
+            }
+            catch(err) {
                 return 0;
             }
         };
@@ -45,15 +60,55 @@ module.exports = function(app) {
             }
         };
 
-        yooSlideBoxCtrl.setMouseSync = function() {
+        yooSlideBoxCtrl.goToPage = function(index) {
             if(yooSlideBoxCtrl.getScrollview()) {
-                yooSlideBoxCtrl.getScrollview().renderNode.setMouseSync();
+                var toPageIndex = index % yooSlideBoxCtrl.getTotalPages();
+                if(toPageIndex < 0) {
+                    toPageIndex += yooSlideBoxCtrl.getTotalPages();
+                }
+                yooSlideBoxCtrl.getScrollview().renderNode.goToPage(toPageIndex);
             }
         };
 
-        yooSlideBoxCtrl.goToPage = function(index) {
+        /**********Ionic Delegate Functions**********/
+
+        /*
+         * update() - Update the slidebox (for example if using Angular with ng-repeat, resize it for the elements inside).
+         * X! slide(to, [speed]) - Slide to `to` at speed `speed`
+         * enableSlide([shouldEnable]) - Returns boolean for whether sliding is enabled or not, shouldEnable dictates state
+         * XX previous() -  go to previous slide
+         * XX next() - go to next slide
+         * stop() - stop automatically sliding
+         * start() - start automatically sliding
+         * XX currentIndex() - get current index
+         * XX slidesCount() - return the total number of slides currently
+         */
+
+        yooSlideBoxCtrl.slidesCount = function() {
+            return yooSlideBoxCtrl.getTotalPages();
+        };
+
+        yooSlideBoxCtrl.currentIndex = function() {
+            return yooSlideBoxCtrl.getCurrentIndex();
+        };
+
+        yooSlideBoxCtrl.slide = function(index) {
+            yooSlideBoxCtrl.goToPage(index);
+        };
+
+        yooSlideBoxCtrl.previous = function() {
+            yooSlideBoxCtrl.goToPage(yooSlideBoxCtrl.getCurrentIndex() - 1);
+        };
+
+        yooSlideBoxCtrl.next = function() {
+            yooSlideBoxCtrl.goToPage(yooSlideBoxCtrl.getCurrentIndex() + 1);
+        };
+
+        /**********Setup Functions**********/
+
+        yooSlideBoxCtrl.setMouseSync = function() {
             if(yooSlideBoxCtrl.getScrollview()) {
-                yooSlideBoxCtrl.getScrollview().renderNode.goToPage(index);
+                yooSlideBoxCtrl.getScrollview().renderNode.setMouseSync();
             }
         };
 
@@ -138,7 +193,7 @@ module.exports = function(app) {
 
     // directive
     var directiveDeps = ['$famous', app.name + '.slideBoxDelegate'];
-    var directive = function($famous, $slideBoxDelegate) {
+    var directive = function($famous, slideBoxDelegate) {
         return {
             require: ['yooSlideBox'],
             restrict: 'AE',
@@ -157,7 +212,7 @@ module.exports = function(app) {
                         var yooSlideBoxCtrl = ctrls[0];
                         yooSlideBoxCtrl.pages = 0;
 
-                        var deregisterInstance = $slideBoxDelegate._registerInstance(
+                        var deregisterInstance = slideBoxDelegate._registerInstance(
                             yooSlideBoxCtrl, attrs.delegateHandle
                         );
 
@@ -182,6 +237,10 @@ module.exports = function(app) {
                         }, function(size) {
                             yooSlideBoxCtrl.setAnimation(yooSlideBoxCtrl.animationType, size);
                         });
+
+                        // $interval(function() {
+                        //     console.log(' index: ', yooSlideBoxCtrl.getCurrentIndex());
+                        // }, 1000);
 
                     }
                 };

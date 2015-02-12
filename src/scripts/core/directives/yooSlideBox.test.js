@@ -11,7 +11,6 @@ describe(app.name, function() {
     describe('Directives', function() {
 
         describe(directivename, function() {
-
             beforeEach(function() {
                 angular.mock.module(app.name);
             });
@@ -243,7 +242,7 @@ describe(app.name, function() {
                     expect(distance).toBe(10);
                 });
 
-                it('#goToPage() should call the famo.us Scrollview', function() {
+                it('#getCurrentIndex() should succeed', function() {
                     unitHelper.compileDirectiveFamous.call(this, directivename,
                         '<yoo-slide-box>' +
                         '<yoo-slide>' + '</yoo-slide>' +
@@ -253,11 +252,217 @@ describe(app.name, function() {
                     );
                     var Scrollview = this.$famous['famous/views/Scrollview'];
 
-                    spyOn(Scrollview.prototype, 'goToPage');
+                    spyOn(Scrollview.prototype, 'getCurrentIndex').and.returnValue(7);
+                    var index = this.controller.getCurrentIndex();
+                    expect(Scrollview.prototype.getCurrentIndex).toHaveBeenCalled();
+                    expect(index).toBe(7);
+                });
 
-                    this.controller.goToPage(2);
+                it('#goToPage() should call the famo.us Scrollview and succeed', function() {
+                    var self = this;
+                    unitHelper.compileDirectiveFamous.call(self, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+                    var Scrollview = self.$famous['famous/views/Scrollview'];
 
+                    var currentIndex = 0;
+
+                    spyOn(Scrollview.prototype, 'getCurrentIndex').and.callFake(function() {
+                        return currentIndex;
+                    });
+
+                    spyOn(Scrollview.prototype, 'goToPage').and.callFake(function(index) {
+                        currentIndex = index;
+                    });
+
+                    self.controller.goToPage(2);
                     expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(2);
+
+                    expect(self.controller.getCurrentIndex()).toBe(2);
+
+                });
+
+                it('#goToPage() should wrap if index exceeds the bounds', function() {
+                    var self = this;
+                    unitHelper.compileDirectiveFamous.call(self, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+                    var Scrollview = self.$famous['famous/views/Scrollview'];
+
+                    var currentIndex = 0;
+
+                    spyOn(Scrollview.prototype, 'getCurrentIndex').and.callFake(function() {
+                        return currentIndex;
+                    });
+
+                    spyOn(Scrollview.prototype, 'goToPage').and.callFake(function(index) {
+                        currentIndex = index;
+                    });
+
+                    self.controller.goToPage(5);
+                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(2);
+
+                    expect(self.controller.getCurrentIndex()).toBe(2);
+
+                    self.controller.goToPage(-2);
+                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(1);
+
+                    expect(self.controller.getCurrentIndex()).toBe(1);
+
+                });
+
+                it('#currentIndex() should succeed', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+                    var Scrollview = this.$famous['famous/views/Scrollview'];
+
+                    spyOn(Scrollview.prototype, 'getCurrentIndex').and.returnValue(7);
+                    var index = this.controller.currentIndex();
+                    expect(Scrollview.prototype.getCurrentIndex).toHaveBeenCalled();
+                    expect(index).toBe(7);
+
+                });
+
+                it('#slide() should call the famo.us Scrollview and succeed', function() {
+                    var self = this;
+                    unitHelper.compileDirectiveFamous.call(self, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+                    var Scrollview = self.$famous['famous/views/Scrollview'];
+
+                    var currentIndex = 0;
+
+                    spyOn(Scrollview.prototype, 'getCurrentIndex').and.callFake(function() {
+                        return currentIndex;
+                    });
+
+                    spyOn(Scrollview.prototype, 'goToPage').and.callFake(function(index) {
+                        currentIndex = index;
+                    });
+
+                    self.controller.slide(2);
+                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(2);
+
+                    expect(self.controller.getCurrentIndex()).toBe(2);
+
+                });
+
+                it('#slide() should wrap if index exceeds the bounds', function() {
+                    var self = this;
+                    unitHelper.compileDirectiveFamous.call(self, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+                    var Scrollview = self.$famous['famous/views/Scrollview'];
+
+                    var currentIndex = 0;
+
+                    spyOn(Scrollview.prototype, 'getCurrentIndex').and.callFake(function() {
+                        return currentIndex;
+                    });
+
+                    spyOn(Scrollview.prototype, 'goToPage').and.callFake(function(index) {
+                        currentIndex = index;
+                    });
+
+                    self.controller.slide(5);
+                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(2);
+
+                    expect(self.controller.getCurrentIndex()).toBe(2);
+
+                    self.controller.slide(-2);
+                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(1);
+
+                    expect(self.controller.getCurrentIndex()).toBe(1);
+
+                });
+
+                it('#next() should succeed and wrap', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+                    var Scrollview = this.$famous['famous/views/Scrollview'];
+
+                    var currentIndex = 0;
+
+                    spyOn(Scrollview.prototype, 'goToPage').and.callFake(function(index) {
+                        currentIndex = index;
+                    });
+                    spyOn(Scrollview.prototype, 'getCurrentIndex').and.callFake(function() {
+                        return currentIndex;
+                    });
+
+                    expect(this.controller.getCurrentIndex()).toBe(0);
+
+                    this.controller.next();
+                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(1);
+                    expect(this.controller.getCurrentIndex()).toBe(1);
+
+                    this.controller.next();
+                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(2);
+                    expect(this.controller.getCurrentIndex()).toBe(2);
+
+                    this.controller.next();
+                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(0);
+                    expect(this.controller.getCurrentIndex()).toBe(0);
+                });
+
+                it('#previous() should succeed and wrap', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+                    var Scrollview = this.$famous['famous/views/Scrollview'];
+
+                    var currentIndex = 0;
+
+                    spyOn(Scrollview.prototype, 'goToPage').and.callFake(function(index) {
+                        currentIndex = index;
+                    });
+                    spyOn(Scrollview.prototype, 'getCurrentIndex').and.callFake(function() {
+                        return currentIndex;
+                    });
+
+                    expect(this.controller.getCurrentIndex()).toBe(0);
+
+                    this.controller.previous();
+                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(2);
+                    expect(this.controller.getCurrentIndex()).toBe(2);
+
+                    this.controller.previous();
+                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(1);
+                    expect(this.controller.getCurrentIndex()).toBe(1);
+
+                    this.controller.previous();
+                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(0);
+                    expect(this.controller.getCurrentIndex()).toBe(0);
                 });
 
             });
@@ -282,7 +487,106 @@ describe(app.name, function() {
                     expect(this.controller.goToPage).toHaveBeenCalledWith(index);
                 });
 
-                it('should deregister on $destory', function() {
+                it('#slide() should call directives slide method from another controller', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+
+                    spyOn(this.controller, 'slide');
+                    var index = 2;
+                    this.slideBoxDelegate.slide(index);
+                    expect(this.controller.slide).toHaveBeenCalledWith(index);
+                });
+
+                it('#getCurrentIndex() should call directives getCurrentIndex method from another controller', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+
+                    spyOn(this.controller, 'getCurrentIndex');
+                    this.slideBoxDelegate.getCurrentIndex();
+                    expect(this.controller.getCurrentIndex).toHaveBeenCalled();
+                });
+
+                it('#currentIndex() should call directives currentIndex method from another controller', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+
+                    spyOn(this.controller, 'currentIndex');
+                    this.slideBoxDelegate.currentIndex();
+                    expect(this.controller.currentIndex).toHaveBeenCalled();
+                });
+
+                it('#getTotalPages() should call directives getTotalPages method from another controller', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+
+                    spyOn(this.controller, 'getTotalPages');
+                    this.slideBoxDelegate.getTotalPages();
+                    expect(this.controller.getTotalPages).toHaveBeenCalled();
+                });
+
+                it('#slidesCount() should call directives slidesCount method from another controller', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+
+                    spyOn(this.controller, 'slidesCount');
+                    this.slideBoxDelegate.slidesCount();
+                    expect(this.controller.slidesCount).toHaveBeenCalled();
+                });
+
+                it('#previous() should call directives previous method from another controller', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+
+                    spyOn(this.controller, 'previous');
+                    this.slideBoxDelegate.previous();
+                    expect(this.controller.previous).toHaveBeenCalled();
+                });
+
+                it('#next() should call directives next method from another controller', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+
+                    spyOn(this.controller, 'next');
+                    this.slideBoxDelegate.next();
+                    expect(this.controller.next).toHaveBeenCalled();
+                });
+
+                it('should deregister on $destroy', function() {
                     unitHelper.compileDirectiveFamous.call(this, directivename,
                         '<yoo-slide-box>' +
                         '<yoo-slide>' + '</yoo-slide>' +
@@ -296,7 +600,7 @@ describe(app.name, function() {
                     expect(this.slideBoxDelegate._instances.length).toBe(0);
                 });
 
-                it('should call slideBox by their handle', function() {
+                it('should call slideBox by its handle', function() {
                     var element = unitHelper.compileDirectiveFamous.call(this, directivename,
                         '<yoo-slide-box delegate-handle="handle-a" id="directive-a">' +
                         '<yoo-slide>' + '</yoo-slide>' +
