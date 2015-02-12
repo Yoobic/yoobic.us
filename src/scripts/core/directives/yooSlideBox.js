@@ -138,7 +138,7 @@ module.exports = function(app) {
 
     // directive
     var directiveDeps = ['$famous', app.name + '.slideBoxDelegate'];
-    var directive = function($famous, $slideBoxDelegate) {
+    var directive = function($famous, slideBoxDelegate) {
         return {
             require: ['yooSlideBox'],
             restrict: 'AE',
@@ -157,8 +157,8 @@ module.exports = function(app) {
                         var yooSlideBoxCtrl = ctrls[0];
                         yooSlideBoxCtrl.pages = 0;
 
-                        var deregisterInstance = $slideBoxDelegate._registerInstance(
-                            yooSlideBoxCtrl, attrs.delegateHandle
+                        var deregisterInstance = slideBoxDelegate._registerInstance(
+                            yooSlideBoxCtrl, attrs.delegateHandle || attrs.id
                         );
 
                         scope.$on('$destroy', function() {

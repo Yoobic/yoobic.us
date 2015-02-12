@@ -19,7 +19,8 @@
   ],
   "main": "./src/scripts/core/index.js",
   "dependencies": {
-    "famous-polyfills": "^0.3.0"
+    "famous-polyfills": "^0.3.0",
+    "yoobic-angular-core": "0.0.12"
   },
   "devDependencies": {
     "brfs": "1.2.0",
