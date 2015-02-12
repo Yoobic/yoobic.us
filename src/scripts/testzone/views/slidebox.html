@@ -1,11 +1,11 @@
 <fa-view>
-    <fa-header-footer-layout fa-options="{headerSize:0, footerSize: 75}">
+    <fa-header-footer-layout fa-options="{headerSize:0, footerSize: 120}">
         <fa-modifier>
             <fa-surface fa-background-color="'white'">
-                
+
             </fa-surface>
         </fa-modifier>
-        <yoo-slide-box on-slide-changed="slideHasChanged($index)" show-pager="true" animation-type="animation1">
+        <yoo-slide-box on-slide-changed="slideHasChanged($index)" show-pager="true" animation-type="{{vm.animation}}">
             <yoo-slide>
                 <div class="box blue">
                     <h1>BLUE</h1>
@@ -39,9 +39,13 @@
         </yoo-slide-box>
 
         <fa-modifier fa-size="[undefined,100]">
-            <fa-modifier fa-origin="[0.5,0.5]" fa-align="[0.5,0.5]" fa-size="[56,54]">
+            <fa-modifier fa-origin="[0.5,0.75]" fa-align="[0.5,0.75]" fa-size="[200,56]">
                 <fa-surface>
                     <button class="button button-assertive" ng-click="vm.goToPage(3)">Click</button>
+                    <select ng-model="vm.animation" ng-options="animation for animation in vm.animations">
+
+                    </select>
+
                 </fa-surface>
             </fa-modifier>
         </fa-modifier>
