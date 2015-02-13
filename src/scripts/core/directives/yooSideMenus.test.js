@@ -26,6 +26,28 @@ describe(app.name, function() {
                 expect(element.html().trim()).toBeDefined();
             });
 
+            describe('sideMenuDelegate', function() {
+
+                beforeEach(inject(function($injector) {
+                    this.sideMenuDelegate = $injector.get(app.name + '.sideMenuDelegate');
+                }));
+
+                it('should deregister on $destory', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-side-menus>' +
+                        '<yoo-side-menu-content>' + '</yoo-side-menu-content>' +
+                        '<yoo-side-menu side="left">' + '</yoo-side-menu>' +
+                        '<yoo-side-menu side="right">' + '</yoo-side-menu>' +
+                        '</yoo-side-menus>'
+                    );
+
+                    expect(this.sideMenuDelegate._instances.length).toBe(1);
+                    this.$scope.$destroy();
+                    expect(this.sideMenuDelegate._instances.length).toBe(0);
+                });
+
+            });
+
         });
     });
 });
