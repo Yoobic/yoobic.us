@@ -38,8 +38,7 @@ module.exports = function(app) {
                 } else {
                     return 0;
                 }
-            }
-            catch(err) {
+            } catch(err) {
                 return 0;
             }
         };
@@ -62,13 +61,42 @@ module.exports = function(app) {
 
         yooSlideBoxCtrl.goToPage = function(index) {
             if(yooSlideBoxCtrl.getScrollview()) {
-                var toPageIndex = index % yooSlideBoxCtrl.getTotalPages();
-                if(toPageIndex < 0) {
-                    toPageIndex += yooSlideBoxCtrl.getTotalPages();
-                }
-                yooSlideBoxCtrl.getScrollview().renderNode.goToPage(toPageIndex);
+                yooSlideBoxCtrl.getScrollview().renderNode.goToPage(index);
             }
         };
+
+        yooSlideBoxCtrl.goToPreviousPage = function() {
+            if(yooSlideBoxCtrl.getScrollview()) {
+                yooSlideBoxCtrl.getScrollview().renderNode.goToNextPage();
+            }
+        };
+
+        yooSlideBoxCtrl.goToNextPage = function() {
+            if(yooSlideBoxCtrl.getScrollview()) {
+                yooSlideBoxCtrl.getScrollview().renderNode.goToNextPage();
+            }
+        };
+
+        /**********Old Loop Functions**********
+         *
+         * yooSlideBoxCtrl.xgoToPage = function(index) {
+         *     if(yooSlideBoxCtrl.getScrollview()) {
+         *         var toPageIndex = index % yooSlideBoxCtrl.getTotalPages();
+         *         if(toPageIndex < 0) {
+         *             toPageIndex += yooSlideBoxCtrl.getTotalPages();
+         *         }
+         *         yooSlideBoxCtrl.getScrollview().renderNode.goToPage(toPageIndex);
+         *     }
+         * };
+         *
+         * yooSlideBoxCtrl.xgoToPreviousPage = function() {
+         *     yooSlideBoxCtrl.goToPage(yooSlideBoxCtrl.getCurrentIndex() - 1);
+         * };
+         *
+         * yooSlideBoxCtrl.xgoToNextPage = function() {
+         *     yooSlideBoxCtrl.goToPage(yooSlideBoxCtrl.getCurrentIndex() + 1);
+         * };
+         */
 
         /**********Ionic Delegate Functions**********/
 
@@ -97,11 +125,11 @@ module.exports = function(app) {
         };
 
         yooSlideBoxCtrl.previous = function() {
-            yooSlideBoxCtrl.goToPage(yooSlideBoxCtrl.getCurrentIndex() - 1);
+            yooSlideBoxCtrl.goToPreviousPage();
         };
 
         yooSlideBoxCtrl.next = function() {
-            yooSlideBoxCtrl.goToPage(yooSlideBoxCtrl.getCurrentIndex() + 1);
+            yooSlideBoxCtrl.goToNextPage();
         };
 
         /**********Setup Functions**********/
@@ -186,6 +214,13 @@ module.exports = function(app) {
             }
         };
 
+        yooSlideBoxCtrl.enableContinue = function(doesContinue, unwatchLoop) {
+            if(yooSlideBoxCtrl.scrollview.renderNode._node) {
+                yooSlideBoxCtrl.scrollview.renderNode._node._.loop = doesContinue;
+                unwatchLoop();
+            }
+        };
+
     };
     controller.$inject = controllerDeps;
 
@@ -199,7 +234,8 @@ module.exports = function(app) {
             restrict: 'AE',
             scope: {
                 showPager: '=',
-                animationType: '@'
+                animationType: '@',
+                doesContinue: '='
             },
             controller: controller,
             controllerAs: 'yooSlideBoxCtrl',
@@ -219,6 +255,12 @@ module.exports = function(app) {
                         scope.$on('$destroy', function() {
                             deregisterInstance();
                         });
+
+                        // default to looping behavior
+                        // if(typeof attrs.loop === 'undefined' || attrs.loop === true) {
+                        var unwatchLoop = scope.$watch('yooSlideBoxCtrl.scrollview.renderNode._node', function() {
+                            yooSlideBoxCtrl.enableContinue(yooSlideBoxCtrl.doesContinue, unwatchLoop);
+                        });
                     },
                     post: function(scope, element, attrs, ctrls) {
                         var yooSlideBoxCtrl = ctrls[0];
@@ -237,7 +279,6 @@ module.exports = function(app) {
                         }, function(size) {
                             yooSlideBoxCtrl.setAnimation(yooSlideBoxCtrl.animationType, size);
                         });
-
                         // $interval(function() {
                         //     console.log(' index: ', yooSlideBoxCtrl.getCurrentIndex());
                         // }, 1000);

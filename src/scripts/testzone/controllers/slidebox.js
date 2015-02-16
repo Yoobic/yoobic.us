@@ -9,8 +9,12 @@ module.exports = function(app) {
     function controller($famous, famousHelper, $timeout, slideBoxDelegate) {
         var vm = this;
         vm.message = 'Hello World';
+        vm.doesContinue = true;
         vm.goToPage = function(index) {
             slideBoxDelegate.$getByHandle('myslidebox').goToPage(index);
+        };
+        vm.toggleLoop = function() {
+            vm.loop = !vm.loop;
         };
 
         vm.animations = ['animation1', 'animation2', 'standard'];

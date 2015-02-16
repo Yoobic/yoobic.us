@@ -5,7 +5,8 @@
 
             </fa-surface>
         </fa-modifier>
-        <yoo-slide-box on-slide-changed="slideHasChanged($index)" show-pager="true" animation-type="{{vm.animation}}" delegate-handle="myslidebox">
+        <yoo-slide-box on-slide-changed="slideHasChanged($index)" show-pager="true" animation-type="{{vm.animation}}" does-continue="vm.doesContinue" delegate-handle="myslidebox">
+        <!-- <yoo-slide-box on-slide-changed="slideHasChanged($index)" show-pager="true" animation-type="{{vm.animation}}" does-continue="{{vm.doesContinue}}" delegate-handle="myslidebox"> -->
             <yoo-slide>
                 <div class="box blue">
                     <h1>BLUE</h1>

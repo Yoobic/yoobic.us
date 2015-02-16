@@ -9,7 +9,9 @@ module.exports = function(app) {
         'currentIndex',
         'getTotalPages',
         'slidesCount',
+        'goToPreviousPage',
         'previous',
+        'goToNextPage',
         'next'
     ]));
 };
