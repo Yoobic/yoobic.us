@@ -10,6 +10,8 @@ module.exports = function(app) {
         var vm = this;
         vm.message = 'Hello World';
         vm.doesContinue = true;
+        vm.autoPlay = true;
+        vm.slideInterval = 750;
         vm.goToPage = function(index) {
             slideBoxDelegate.$getByHandle('myslidebox').goToPage(index);
         };

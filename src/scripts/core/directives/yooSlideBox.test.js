@@ -20,6 +20,7 @@ describe(app.name, function() {
                 this.$compile = $injector.get('$compile');
                 this.$scope = $injector.get('$rootScope').$new();
                 this.$famous = $injector.get('$famous');
+                this.$interval = $injector.get('$interval');
                 this.famousHelper = $injector.get(app.name + '.famousHelper');
                 this.$scope.vm = {};
             }));
@@ -182,7 +183,7 @@ describe(app.name, function() {
 
             });
 
-            it('should two-way bind to does-continue', function() {
+            xit('should two-way bind to does-continue', function() {
                 var vm = this.$scope.vm;
                 vm.doesContinue = false;
                 unitHelper.compileDirective.call(this, directivename,
@@ -202,6 +203,121 @@ describe(app.name, function() {
                 expect(this.controller.enableContinue).toHaveBeenCalled();
                 expect(this.controller.enableContinue.calls.argsFor(0)).toEqual([vm.doesContinue, 0]);
 
+            });
+
+            it('auto-play should default to true if does-continue is true', function() {
+                var vm = this.$scope.vm;
+                vm.doesContinue = true;
+                unitHelper.compileDirective.call(this, directivename,
+                    '<yoo-slide-box does-continue="vm.doesContinue">' +
+                    '   <yoo-slide>' +
+                    '      <div class="test"></div>' +
+                    '   </yoo-slide>' +
+                    '   <yoo-slide>' +
+                    '      <div class="test"></div>' +
+                    '   </yoo-slide>' +
+                    '</yoo-slide-box>');
+                expect(this.controller.doesContinue).toBe(true);
+                expect(this.controller.autoPlayPromise).toBeDefined();
+                expect(this.controller.autoPlay).toBe(true);
+            });
+
+            iit('auto-play should default to false if does-continue is false', function() {
+                var vm = this.$scope.vm;
+                vm.doesContinue = false;
+                unitHelper.compileDirective.call(this, directivename,
+                    '<yoo-slide-box does-continue="vm.doesContinue">' +
+                    '   <yoo-slide>' +
+                    '      <div class="test"></div>' +
+                    '   </yoo-slide>' +
+                    '   <yoo-slide>' +
+                    '      <div class="test"></div>' +
+                    '   </yoo-slide>' +
+                    '</yoo-slide-box>');
+                expect(this.controller.doesContinue).toBe(false);
+                expect(this.controller.autoPlayPromise).toBeUndefined();
+                expect(this.controller.autoPlay).toBe(false);
+            });
+
+            it('should bind to auto-play', function() {
+                var vm = this.$scope.vm;
+                vm.autoPlay = false;
+                unitHelper.compileDirective.call(this, directivename,
+                    '<yoo-slide-box auto-play="vm.autoPlay">' +
+                    '   <yoo-slide>' +
+                    '      <div class="test"></div>' +
+                    '   </yoo-slide>' +
+                    '   <yoo-slide>' +
+                    '      <div class="test"></div>' +
+                    '   </yoo-slide>' +
+                    '</yoo-slide-box>');
+                expect(this.controller.autoPlayPromise).toBeUndefined();
+
+                vm.autoPlay = true;
+                this.$scope.$digest();
+                expect(this.controller.autoPlayPromise).toBeDefined();
+
+                vm.autoPlay = false;
+                this.$scope.$digest();
+                expect(this.controller.autoPlayPromise).toBeUndefined();
+            });
+
+            it('slide-interval should default to 4000', function() {
+                var vm = this.$scope.vm;
+                unitHelper.compileDirective.call(this, directivename,
+                    '<yoo-slide-box>' +
+                    '</yoo-slide-box>');
+
+                expect(this.controller.slideInterval).toBe(4000);
+            });
+
+            it('should one-way bind to slide-interval', function() {
+                var vm = this.$scope.vm;
+                vm.slideInterval = 300;
+                unitHelper.compileDirective.call(this, directivename,
+                    '<yoo-slide-box slide-interval="vm.slideInterval">' +
+                    '</yoo-slide-box>');
+
+                expect(this.controller.slideInterval).toBe(300);
+
+                vm.slideInterval = 200;
+                this.$scope.$digest();
+                expect(this.controller.slideInterval).toBe(200);
+            });
+
+            it('auto-play should work', function() {
+                var vm = this.$scope.vm;
+                vm.autoPlay = true;
+                unitHelper.compileDirective.call(this, directivename,
+                    '<yoo-slide-box auto-play="vm.autoPlay">' +
+                    '   <yoo-slide></yoo-slide>' +
+                    '   <yoo-slide></yoo-slide>' +
+                    '   <yoo-slide></yoo-slide>' +
+                    '</yoo-slide-box>');
+                spyOn(this.controller, 'goToNextPage');
+
+                this.$interval.flush(this.controller.slideInterval * 3);
+                expect(this.controller.goToNextPage.calls.count()).toBe(3);
+            });
+
+            it('slide-interval binding should affect auto-play speed', function() {
+                var vm = this.$scope.vm;
+                vm.autoPlay = true;
+                vm.slideInterval = 300;
+                unitHelper.compileDirective.call(this, directivename,
+                    '<yoo-slide-box auto-play="vm.autoPlay" slide-interval="vm.slideInterval">' +
+                    '</yoo-slide-box>');
+                spyOn(this.controller, 'goToNextPage');
+
+                this.$interval.flush(vm.slideInterval * 2);
+                expect(this.controller.goToNextPage.calls.count()).toBe(2);
+
+                vm.slideInterval = 3000;
+                this.$scope.$digest();
+                expect(this.controller.slideInterval).toBe(3000);
+                this.controller.goToNextPage.calls.reset();
+                this.$interval.flush(vm.slideInterval * 3);
+                expect(this.controller.goToNextPage.calls.count()).toBe(3);
             });
 
             describe('slideBoxCtrl', function() {
