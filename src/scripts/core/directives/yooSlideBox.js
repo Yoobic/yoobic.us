@@ -67,7 +67,7 @@ module.exports = function(app) {
 
         yooSlideBoxCtrl.goToPreviousPage = function() {
             if(yooSlideBoxCtrl.getScrollview()) {
-                yooSlideBoxCtrl.getScrollview().renderNode.goToNextPage();
+                yooSlideBoxCtrl.getScrollview().renderNode.goToPreviousPage();
             }
         };
 
@@ -240,6 +240,8 @@ module.exports = function(app) {
             restrict: 'AE',
             scope: {
                 pagerClick: '&',
+                activeSlide: '=?',
+                onSlideChanged: '&',
                 showPager: '=',
                 animationType: '@',
                 doesContinue: '=?',
@@ -299,6 +301,12 @@ module.exports = function(app) {
                             yooSlideBoxCtrl.setAnimation(animationType, yooSlideBoxCtrl.getContainerLength());
                         });
 
+                        scope.$watch('yooSlideBoxCtrl.activeSlide', function(slide) {
+                            if(typeof slide !== 'undefined') {
+                                yooSlideBoxCtrl.goToPage(slide);
+                            }
+                        });
+
                         scope.$watch(function() {
                             return yooSlideBoxCtrl.getContainerLength();
                         }, function(size) {
@@ -306,26 +314,32 @@ module.exports = function(app) {
                         });
 
                         scope.$watch(function() {
-                                return {
-                                    autoPlay: yooSlideBoxCtrl.autoPlay,
-                                    slideInterval: yooSlideBoxCtrl.slideInterval
-                                };
-                            }, function(params) {
-                                if(yooSlideBoxCtrl.autoPlayPromise) {
-                                    $interval.cancel(yooSlideBoxCtrl.autoPlayPromise);
-                                    delete yooSlideBoxCtrl.autoPlayPromise;
-                                }
-                                if(params.autoPlay) {
-                                    yooSlideBoxCtrl.autoPlayPromise = $interval(function() {
-                                        yooSlideBoxCtrl.goToNextPage();
-                                    }, params.slideInterval);
-                                }
-                            }, true);
+                            return yooSlideBoxCtrl.getCurrentIndex();
+                        }, function(index) {
+                            if(yooSlideBoxCtrl.onSlideChanged) {
+                                yooSlideBoxCtrl.onSlideChanged(index);
+                            }
+                        });
 
+                        scope.$watch(function() {
+                            return {
+                                autoPlay: yooSlideBoxCtrl.autoPlay,
+                                slideInterval: yooSlideBoxCtrl.slideInterval
+                            };
+                        }, function(params) {
+                            if(yooSlideBoxCtrl.autoPlayPromise) {
+                                $interval.cancel(yooSlideBoxCtrl.autoPlayPromise);
+                                delete yooSlideBoxCtrl.autoPlayPromise;
+                            }
+                            if(params.autoPlay) {
+                                yooSlideBoxCtrl.autoPlayPromise = $interval(function() {
+                                    yooSlideBoxCtrl.goToNextPage();
+                                }, params.slideInterval);
+                            }
+                        }, true);
                         // $interval(function() {
                         //     console.log(' index: ', yooSlideBoxCtrl.getCurrentIndex());
                         // }, 1000);
-
                     }
                 };
             }

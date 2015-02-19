@@ -18,7 +18,7 @@ module.exports = function(app) {
         vm.toggleLoop = function() {
             vm.loop = !vm.loop;
         };
-
+        vm.activeSlides = [0, 1, 2, 3, 4, 5];
         vm.animations = ['animation1', 'animation2', 'standard'];
 
     }

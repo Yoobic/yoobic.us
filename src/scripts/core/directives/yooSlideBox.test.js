@@ -299,6 +299,30 @@ describe(app.name, function() {
                 expect(this.controller.goToNextPage.calls.count()).toBe(3);
             });
 
+            it('active-slide should bind', function() {
+                var vm = this.$scope.vm;
+                vm.activeSlide = 0;
+                unitHelper.compileDirective.call(this, directivename,
+                    '<yoo-slide-box auto-play="vm.autoPlay" active-slide="vm.activeSlide">' +
+                    '   <yoo-slide></yoo-slide>' +
+                    '   <yoo-slide></yoo-slide>' +
+                    '   <yoo-slide></yoo-slide>' +
+                    '</yoo-slide-box>');
+                spyOn(this.controller, 'goToPage');
+
+                vm.activeSlide = 2;
+                this.$scope.$digest();
+                expect(this.controller.goToPage).toHaveBeenCalledWith(vm.activeSlide);
+
+                vm.activeSlide = 1;
+                this.$scope.$digest();
+                expect(this.controller.goToPage).toHaveBeenCalledWith(vm.activeSlide);
+
+                delete vm.activeSlide;
+                this.$scope.$digest();
+                expect(this.controller.goToPage.calls.count()).toBe(2);
+            });
+
             it('slide-interval binding should affect auto-play speed', function() {
                 var vm = this.$scope.vm;
                 vm.autoPlay = true;
@@ -318,6 +342,68 @@ describe(app.name, function() {
                 this.$interval.flush(vm.slideInterval * 3);
                 expect(this.controller.goToNextPage.calls.count()).toBe(3);
             });
+
+            it('on-slide-change binding should run when changing slides', function() {
+                var vm = this.$scope.vm;
+                // vm.autoPlay = true;
+                // vm.slideInterval = 300;
+                vm.testFn1 = function() {};
+                vm.testFn2 = function() {};
+                vm.changed = function() {
+                    vm.testFn1();
+                };
+
+                unitHelper.compileDirectiveFamous.call(this, directivename,
+                    '<yoo-slide-box on-slide-changed="vm.changed()">' +
+                    '   <yoo-slide></yoo-slide>' +
+                    '   <yoo-slide></yoo-slide>' +
+                    '   <yoo-slide></yoo-slide>' +
+                    '   <yoo-slide></yoo-slide>' +
+                    '</yoo-slide-box>');
+                var Scrollview = this.$famous['famous/views/Scrollview'];
+
+                var fakeCurrentIndex = 0;
+
+                spyOn(Scrollview.prototype, 'getCurrentIndex').and.callFake(function() {
+                    return fakeCurrentIndex;
+                });
+                spyOn(Scrollview.prototype, 'goToNextPage').and.callFake(function(index) {
+                    fakeCurrentIndex++;
+                });
+                spyOn(Scrollview.prototype, 'goToPreviousPage').and.callFake(function(index) {
+                    fakeCurrentIndex--;
+                });
+
+                spyOn(vm, 'testFn1');
+                spyOn(vm, 'testFn2');
+
+                this.controller.goToNextPage();
+                this.$scope.$digest();
+                this.controller.goToNextPage();
+                this.$scope.$digest();
+                this.controller.goToNextPage();
+                this.$scope.$digest();
+                expect(vm.testFn1.calls.count()).toBe(3);
+
+                vm.changed = function() {
+                    vm.testFn2();
+                };
+
+                this.controller.goToPreviousPage();
+                this.$scope.$digest();
+                this.controller.goToPreviousPage();
+                this.$scope.$digest();
+                expect(vm.testFn2.calls.count()).toBe(2);
+            });
+
+            /**********Controller tests**********/
+            /**********Controller tests**********/
+            /**********Controller tests**********/
+            /**********Controller tests**********/
+            /**********Controller tests**********/
+            /**********Controller tests**********/
+            /**********Controller tests**********/
+            /**********Controller tests**********/
 
             describe('slideBoxCtrl', function() {
 

@@ -5,7 +5,7 @@
 
             </fa-surface>
         </fa-modifier>
-        <yoo-slide-box on-slide-changed="slideHasChanged($index)" show-pager="true" animation-type="{{vm.animation}}" does-continue="vm.doesContinue" auto-play="vm.autoPlay" slide-interval="vm.slideInterval" delegate-handle="myslidebox">
+        <yoo-slide-box on-slide-changed="slideHasChanged($index)" show-pager="true" animation-type="{{vm.animation}}" does-continue="vm.doesContinue" auto-play="vm.autoPlay" slide-interval="vm.slideInterval" delegate-handle="myslidebox" active-slide="vm.activeSlide">
         <!-- <yoo-slide-box on-slide-changed="slideHasChanged($index)" show-pager="true" animation-type="{{vm.animation}}" does-continue="{{vm.doesContinue}}" delegate-handle="myslidebox"> -->
             <yoo-slide>
                 <div class="box blue">
@@ -44,6 +44,9 @@
                 <fa-surface>
                     <button class="button button-assertive" ng-click="vm.goToPage(3)">Click</button>
                     <select ng-model="vm.animation" ng-options="animation for animation in vm.animations">
+
+                    </select>
+                    <select ng-model="vm.activeSlide" ng-options="activeSlide for activeSlide in vm.activeSlides">
 
                     </select>
 
