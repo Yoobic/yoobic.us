@@ -16,10 +16,60 @@
     <!--[if lt IE 7]>
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
     <![endif]-->
-    <fa-app class="full-screen">
-        <ui-view></ui-view>
-    </fa-app>
+    <div id="wrapper">
+        <table>
+            <tbody>
+                <tr>
+                    <td class="ij-sidebar">
+                        <div id="sidebar-wrapper">
+                            <ul class="sidebar-nav">
+                                <li class="sidebar-brand">
+                                    <a href="#">
+                        Start Bootstrap
+                    </a>
+                                </li>
+                                <li>
+                                    <a ui-sref="slidebox">Slidebox</a>
+                                </li>
+                                <li>
+                                    <a href="#">Shortcuts</a>
+                                </li>
+                                <li>
+                                    <a href="#">Overview</a>
+                                </li>
+                                <li>
+                                    <a href="#">Events</a>
+                                </li>
+                                <li>
+                                    <a href="#">About</a>
+                                </li>
+                                <li>
+                                    <a href="#">Services</a>
+                                </li>
+                                <li>
+                                    <a href="#">Contact</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                    <td class="ij-content">
+                        <div id="page-content-wrapper" class="full-height">
+                            <div class="container-fluid full-height">
+                                <div class="row full-height">
+                                    <div class="col-lg-12 full-height">
+                                        <fa-app class="full-height full-width">
+                                            <ui-view></ui-view>
+                                        </fa-app>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
+    </div>
     <script src="yoobic.us.js"></script>
 </body>
 

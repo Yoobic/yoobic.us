@@ -59,14 +59,14 @@ module.exports = function() {
             src: [
                 './' + clientFolder + '/styles/main{{targetSuffix}}.scss'
             ],
-            watchFolder: './' + clientFolder + '/styles/**/*.scss',
+            watchFolder: './' + clientFolder + '/styles/**/*.*',
             dest: 'styles',
             destName: 'main.css',
             sass: {
                 src: ['./' + clientFolder + '/styles/main{{targetSuffix}}.scss']
             },
             css: {
-                src: ['./bower_components/famous-angular/dist/famous-angular.css']
+                src: ['./bower_components/famous-angular/dist/famous-angular.css', './' + clientFolder + '/styles/*.css']
             }
         },
 
