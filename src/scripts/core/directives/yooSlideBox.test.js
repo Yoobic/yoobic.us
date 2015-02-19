@@ -222,7 +222,7 @@ describe(app.name, function() {
                 expect(this.controller.autoPlay).toBe(true);
             });
 
-            iit('auto-play should default to false if does-continue is false', function() {
+            it('auto-play should default to false if does-continue is false', function() {
                 var vm = this.$scope.vm;
                 vm.doesContinue = false;
                 unitHelper.compileDirective.call(this, directivename,
@@ -263,7 +263,6 @@ describe(app.name, function() {
             });
 
             it('slide-interval should default to 4000', function() {
-                var vm = this.$scope.vm;
                 unitHelper.compileDirective.call(this, directivename,
                     '<yoo-slide-box>' +
                     '</yoo-slide-box>');

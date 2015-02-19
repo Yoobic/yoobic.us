@@ -239,6 +239,7 @@ module.exports = function(app) {
             require: ['yooSlideBox'],
             restrict: 'AE',
             scope: {
+                pagerClick: '&',
                 showPager: '=',
                 animationType: '@',
                 doesContinue: '=?',
