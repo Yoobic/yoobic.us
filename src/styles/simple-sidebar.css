@@ -35,16 +35,6 @@
     transition: all 0.5s ease;
 }
 
-.ij-sidebar {
-    width: 200px;
-    /*height: 50%;*/
-}
-
-.ij-content {
-    /*width: 90%;*/
-    /*height: 50%;*/
-}
-
 html, body {
     height: 100%;
 }

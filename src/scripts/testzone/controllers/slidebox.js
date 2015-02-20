@@ -6,7 +6,7 @@ module.exports = function(app) {
 
     var deps = ['$famous', app.namespace.core + '.famousHelper', '$timeout', app.namespace.core + '.slideBoxDelegate'];
 
-    function controller($famous, famousHelper, $timeout, slideBoxDelegate) {
+    function controller($scope, $famous, famousHelper, $timeout, slideBoxDelegate) {
         var vm = this;
         vm.message = 'Hello World';
         vm.goToPage = function(index) {
@@ -14,6 +14,21 @@ module.exports = function(app) {
         };
 
         vm.animations = ['animation1', 'animation2', 'standard'];
+        vm.sidebarWidth = 250;
+        vm.getContentSize = function(){
+            return [window.innerWidth - vm.sidebarWidth, undefined];
+        }
+        // var EventHandler = $famous['famous/core/EventHandler'];
+        // $scope.eventHandler = new EventHandler();
+        // $scope.options = {
+        //   scrollViewOuter: {
+        //     direction: 0,
+        //     paginated: true
+        //   },
+        //   scrollViewInner :{
+        //     direction: 1
+        //   }
+        // };
 
     }
 
