@@ -1,5 +1,6 @@
 'use strict';
 var servicename = 'famousOverrides';
+var _ = require('lodash');
 
 module.exports = function(app) {
 
@@ -62,6 +63,28 @@ module.exports = function(app) {
             Scrollview.prototype.setMouseSync = function() {
                 this.sync.addSync(['mouse']);
             };
+
+            Scrollview.prototype.disableSyncs = function() {
+                _(this.sync._syncs).forEach(function(evt, evtName) {
+                    this.sync.unpipeSync(evtName);
+                }.bind(this));
+            };
+
+            Scrollview.prototype.enableSyncs = function() {
+                _(this.sync._syncs).forEach(function(evt, evtName) {
+                    this.sync.pipeSync(evtName);
+                }.bind(this));
+            };
+
+            Scrollview.prototype.enableSlide = function(shouldEnable) {
+                if(shouldEnable) {
+                    this.enableSyncs();
+                } else if(!shouldEnable && shouldEnable !== undefined) {
+                    this.disableSyncs();
+                }
+                return !!this.sync._eventOutput.upstream.length;
+            };
+
         };
 
         return {

@@ -20,7 +20,7 @@ describe(app.name, function() {
                 this.$compile = $injector.get('$compile');
                 this.$scope = $injector.get('$rootScope').$new();
                 this.$famous = $injector.get('$famous');
-                this.$interval = $injector.get('$interval');
+                this.$timeout = $injector.get('$timeout');
                 this.famousHelper = $injector.get(app.name + '.famousHelper');
                 this.$scope.vm = {};
             }));
@@ -183,11 +183,11 @@ describe(app.name, function() {
 
             });
 
-            xit('should two-way bind to does-continue', function() {
+            it('should bind to does-continue', function() {
                 var vm = this.$scope.vm;
                 vm.doesContinue = false;
                 unitHelper.compileDirective.call(this, directivename,
-                    '<yoo-slide-box does-continue="{{vm.doesContinue}}">' +
+                    '<yoo-slide-box does-continue="vm.doesContinue">' +
                     '   <yoo-slide>' +
                     '      <div class="test"></div>' +
                     '   </yoo-slide>' +
@@ -195,53 +195,16 @@ describe(app.name, function() {
                     '      <div class="test"></div>' +
                     '   </yoo-slide>' +
                     '</yoo-slide-box>');
-
                 spyOn(this.controller, 'enableContinue').and.callThrough();
 
                 vm.doesContinue = true;
                 this.$scope.$digest();
-                expect(this.controller.enableContinue).toHaveBeenCalled();
-                expect(this.controller.enableContinue.calls.argsFor(0)).toEqual([vm.doesContinue, 0]);
-
-            });
-
-            it('auto-play should default to true if does-continue is true', function() {
-                var vm = this.$scope.vm;
-                vm.doesContinue = true;
-                unitHelper.compileDirective.call(this, directivename,
-                    '<yoo-slide-box does-continue="vm.doesContinue">' +
-                    '   <yoo-slide>' +
-                    '      <div class="test"></div>' +
-                    '   </yoo-slide>' +
-                    '   <yoo-slide>' +
-                    '      <div class="test"></div>' +
-                    '   </yoo-slide>' +
-                    '</yoo-slide-box>');
-                expect(this.controller.doesContinue).toBe(true);
-                expect(this.controller.autoPlayPromise).toBeDefined();
-                expect(this.controller.autoPlay).toBe(true);
-            });
-
-            it('auto-play should default to false if does-continue is false', function() {
-                var vm = this.$scope.vm;
-                vm.doesContinue = false;
-                unitHelper.compileDirective.call(this, directivename,
-                    '<yoo-slide-box does-continue="vm.doesContinue">' +
-                    '   <yoo-slide>' +
-                    '      <div class="test"></div>' +
-                    '   </yoo-slide>' +
-                    '   <yoo-slide>' +
-                    '      <div class="test"></div>' +
-                    '   </yoo-slide>' +
-                    '</yoo-slide-box>');
-                expect(this.controller.doesContinue).toBe(false);
-                expect(this.controller.autoPlayPromise).toBeUndefined();
-                expect(this.controller.autoPlay).toBe(false);
+                expect(this.controller.enableContinue).toHaveBeenCalledWith(vm.doesContinue);
             });
 
             it('should bind to auto-play', function() {
                 var vm = this.$scope.vm;
-                vm.autoPlay = false;
+                vm.autoPlay = true;
                 unitHelper.compileDirective.call(this, directivename,
                     '<yoo-slide-box auto-play="vm.autoPlay">' +
                     '   <yoo-slide>' +
@@ -251,30 +214,24 @@ describe(app.name, function() {
                     '      <div class="test"></div>' +
                     '   </yoo-slide>' +
                     '</yoo-slide-box>');
-                expect(this.controller.autoPlayPromise).toBeUndefined();
-
-                vm.autoPlay = true;
-                this.$scope.$digest();
-                expect(this.controller.autoPlayPromise).toBeDefined();
+                expect(this.controller.autoPlay).toBe(true);
 
                 vm.autoPlay = false;
                 this.$scope.$digest();
-                expect(this.controller.autoPlayPromise).toBeUndefined();
+                expect(this.controller.autoPlay).toBe(false);
             });
 
-            it('slide-interval should default to 4000', function() {
-                unitHelper.compileDirective.call(this, directivename,
-                    '<yoo-slide-box>' +
-                    '</yoo-slide-box>');
-
-                expect(this.controller.slideInterval).toBe(4000);
-            });
-
-            it('should one-way bind to slide-interval', function() {
+            it('should bind to slide-interval', function() {
                 var vm = this.$scope.vm;
                 vm.slideInterval = 300;
                 unitHelper.compileDirective.call(this, directivename,
                     '<yoo-slide-box slide-interval="vm.slideInterval">' +
+                    '   <yoo-slide>' +
+                    '      <div class="test"></div>' +
+                    '   </yoo-slide>' +
+                    '   <yoo-slide>' +
+                    '      <div class="test"></div>' +
+                    '   </yoo-slide>' +
                     '</yoo-slide-box>');
 
                 expect(this.controller.slideInterval).toBe(300);
@@ -284,19 +241,160 @@ describe(app.name, function() {
                 expect(this.controller.slideInterval).toBe(200);
             });
 
-            it('auto-play should work', function() {
+            it('should bind to slide-direction', function() {
                 var vm = this.$scope.vm;
-                vm.autoPlay = true;
+                vm.slideDirection = 'invalid slideDirection!!';
                 unitHelper.compileDirective.call(this, directivename,
-                    '<yoo-slide-box auto-play="vm.autoPlay">' +
-                    '   <yoo-slide></yoo-slide>' +
-                    '   <yoo-slide></yoo-slide>' +
-                    '   <yoo-slide></yoo-slide>' +
+                    '<yoo-slide-box slide-direction="vm.slideDirection">' +
+                    '   <yoo-slide>' +
+                    '      <div class="test"></div>' +
+                    '   </yoo-slide>' +
+                    '   <yoo-slide>' +
+                    '      <div class="test"></div>' +
+                    '   </yoo-slide>' +
                     '</yoo-slide-box>');
-                spyOn(this.controller, 'goToNextPage');
+                expect(this.controller.slideDirection).toBe('goToNextPage');
 
-                this.$interval.flush(this.controller.slideInterval * 3);
-                expect(this.controller.goToNextPage.calls.count()).toBe(3);
+                vm.slideDirection = 'goToPreviousPage';
+                this.$scope.$digest();
+                expect(this.controller.slideDirection).toBe('goToPreviousPage');
+
+                vm.slideDirection = 'goToNextPage';
+                this.$scope.$digest();
+                expect(this.controller.slideDirection).toBe('goToNextPage');
+            });
+
+            describe('auto-play', function() {
+                it('should work', function() {
+                    var vm = this.$scope.vm;
+                    vm.autoPlay = true;
+                    unitHelper.compileDirective.call(this, directivename,
+                        '<yoo-slide-box auto-play="vm.autoPlay">' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '</yoo-slide-box>');
+                    spyOn(this.controller, this.controller.slideDirection);
+
+                    this.$timeout.flush(this.controller.slideInterval);
+                    this.$timeout.flush(this.controller.slideInterval);
+                    this.$timeout.flush(this.controller.slideInterval);
+                    expect(this.controller[this.controller.slideDirection].calls.count()).toBe(3);
+                });
+
+                it('should use default slideInterval and slideDirection', function() {
+                    var vm = this.$scope.vm;
+                    vm.autoPlay = true;
+                    unitHelper.compileDirective.call(this, directivename,
+                        '<yoo-slide-box auto-play="vm.autoPlay">' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '</yoo-slide-box>');
+                    spyOn(this.controller, 'goToNextPage');
+                    spyOn(this.controller, 'goToPreviousPage');
+
+                    expect(this.controller.slideInterval).toBe(4000);
+                    expect(this.controller.slideDirection).toBe('goToNextPage');
+                    expect(this.controller.goToNextPage.calls.count()).toBe(0);
+                    this.$timeout.flush(4000);
+                    this.$timeout.flush(4000);
+                    this.$timeout.flush(4000);
+                    expect(this.controller.goToNextPage.calls.count()).toBe(3);
+                    expect(this.controller.goToPreviousPage.calls.count()).toBe(0);
+                });
+
+                it('should default to true if does-continue is true', function() {
+                    var vm = this.$scope.vm;
+                    vm.doesContinue = true;
+                    unitHelper.compileDirective.call(this, directivename,
+                        '<yoo-slide-box does-continue="vm.doesContinue" auto-play="vm.autoPlay">' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '</yoo-slide-box>');
+                    spyOn(this.controller, this.controller.slideDirection);
+
+                    expect(this.controller.autoPlay).toBe(true);
+                    this.$timeout.flush(this.controller.slideInterval);
+                    this.$timeout.flush(this.controller.slideInterval);
+                    this.$timeout.flush(this.controller.slideInterval);
+                    expect(this.controller[this.controller.slideDirection].calls.count()).toBe(3);
+                });
+
+                it('should default to false if does-continue is false', function() {
+                    var vm = this.$scope.vm;
+                    vm.doesContinue = false;
+                    unitHelper.compileDirective.call(this, directivename,
+                        '<yoo-slide-box does-continue="vm.doesContinue" auto-play="vm.autoPlay">' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '</yoo-slide-box>');
+                    spyOn(this.controller, this.controller.slideDirection);
+
+                    expect(this.controller.autoPlay).toBe(false);
+                    this.$timeout.flush(this.controller.slideInterval);
+                    this.$timeout.flush(this.controller.slideInterval);
+                    this.$timeout.flush(this.controller.slideInterval);
+                    expect(this.controller[this.controller.slideDirection].calls.count()).toBe(0);
+                });
+
+                it('should obey slide-interval binding', function() {
+                    var vm = this.$scope.vm;
+                    vm.autoPlay = true;
+                    vm.slideInterval = 300;
+                    unitHelper.compileDirective.call(this, directivename,
+                        '<yoo-slide-box auto-play="vm.autoPlay" slide-interval="vm.slideInterval">' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '</yoo-slide-box>');
+                    spyOn(this.controller, this.controller.slideDirection);
+
+                    this.$timeout.flush(vm.slideInterval);
+                    this.$timeout.flush(vm.slideInterval);
+                    expect(this.controller.goToNextPage.calls.count()).toBe(2);
+
+                    vm.slideInterval = 3000;
+                    this.$scope.$digest();
+                    expect(this.controller.slideInterval).toBe(3000);
+                    this.controller.goToNextPage.calls.reset();
+                    this.$timeout.flush(vm.slideInterval);
+                    this.$timeout.flush(vm.slideInterval);
+                    this.$timeout.flush(vm.slideInterval);
+                    expect(this.controller.goToNextPage.calls.count()).toBe(3);
+                });
+
+                it('should obey slide-direction binding', function() {
+                    var vm = this.$scope.vm;
+                    vm.autoPlay = true;
+                    vm.slideDirection = 'goToPreviousPage';
+                    unitHelper.compileDirective.call(this, directivename,
+                        '<yoo-slide-box auto-play="vm.autoPlay" slide-direction="vm.slideDirection">' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '</yoo-slide-box>');
+                    spyOn(this.controller, 'goToNextPage');
+                    spyOn(this.controller, 'goToPreviousPage');
+                    expect(this.controller.slideDirection).toBe('goToPreviousPage');
+
+                    expect(this.controller.goToPreviousPage.calls.count()).toBe(0);
+                    this.$timeout.flush(this.controller.slideInterval);
+                    this.$timeout.flush(this.controller.slideInterval);
+                    expect(this.controller.goToPreviousPage.calls.count()).toBe(2);
+
+                    vm.slideDirection = 'goToNextPage';
+                    this.$scope.$digest();
+                    expect(this.controller.slideDirection).toBe('goToNextPage');
+                    expect(this.controller.goToNextPage.calls.count()).toBe(0);
+                    this.$timeout.flush(this.controller.slideInterval);
+                    this.$timeout.flush(this.controller.slideInterval);
+                    this.$timeout.flush(this.controller.slideInterval);
+                    expect(this.controller.goToNextPage.calls.count()).toBe(3);
+                    expect(this.controller.goToPreviousPage.calls.count()).toBe(2);
+                });
             });
 
             it('active-slide should bind', function() {
@@ -321,26 +419,6 @@ describe(app.name, function() {
                 delete vm.activeSlide;
                 this.$scope.$digest();
                 expect(this.controller.goToPage.calls.count()).toBe(2);
-            });
-
-            it('slide-interval binding should affect auto-play speed', function() {
-                var vm = this.$scope.vm;
-                vm.autoPlay = true;
-                vm.slideInterval = 300;
-                unitHelper.compileDirective.call(this, directivename,
-                    '<yoo-slide-box auto-play="vm.autoPlay" slide-interval="vm.slideInterval">' +
-                    '</yoo-slide-box>');
-                spyOn(this.controller, 'goToNextPage');
-
-                this.$interval.flush(vm.slideInterval * 2);
-                expect(this.controller.goToNextPage.calls.count()).toBe(2);
-
-                vm.slideInterval = 3000;
-                this.$scope.$digest();
-                expect(this.controller.slideInterval).toBe(3000);
-                this.controller.goToNextPage.calls.reset();
-                this.$interval.flush(vm.slideInterval * 3);
-                expect(this.controller.goToNextPage.calls.count()).toBe(3);
             });
 
             it('on-slide-change binding should run when changing slides', function() {
@@ -395,15 +473,6 @@ describe(app.name, function() {
                 this.$scope.$digest();
                 expect(vm.testFn2.calls.count()).toBe(2);
             });
-
-            /**********Controller tests**********/
-            /**********Controller tests**********/
-            /**********Controller tests**********/
-            /**********Controller tests**********/
-            /**********Controller tests**********/
-            /**********Controller tests**********/
-            /**********Controller tests**********/
-            /**********Controller tests**********/
 
             describe('slideBoxCtrl', function() {
 
@@ -481,53 +550,91 @@ describe(app.name, function() {
                     expect(index).toBe(7);
                 });
 
-                it('#goToPage() should call the famo.us Scrollview method', function() {
+                describe('#goToPage', function() {
+                    beforeEach(function() {
+                        unitHelper.compileDirectiveFamous.call(this, directivename,
+                            '<yoo-slide-box>' +
+                            '<yoo-slide>' + '</yoo-slide>' +
+                            '<yoo-slide>' + '</yoo-slide>' +
+                            '<yoo-slide>' + '</yoo-slide>' +
+                            '</yoo-slide-box>'
+                        );
+                        var scrollview = this.$famous.find('fa-scroll-view')[0].renderNode;
+
+                        var mocks = ['goToPage', 'goToNextPage', 'goToPreviousPage'];
+
+                        var createSpyInstance = function(instance, instanceName, mocks) {
+                            instance.originals = _(instance).pick(mocks).value();
+
+                            _(instance).assign(jasmine.createSpyObj(instanceName, mocks));
+
+                            _(instance.originals).forEach(function(origFn, mockName) {
+                                instance[mockName].and.callFake(origFn.bind(instance));
+                            });
+                            return instance;
+                        };
+
+                        scrollview = createSpyInstance(scrollview, 'scrollview', mocks);
+
+                        this.scrollview = {
+                            goToPage: scrollview.goToPage,
+                            goToNextPage: scrollview.goToNextPage,
+                            goToPreviousPage: scrollview.goToPreviousPage
+                        };
+                    });
+
+                    afterEach(function() {
+                        delete this.scrollview;
+                    });
+
+                    it('should call the Scrollview method', function() {
+                        this.controller.goToPage(2);
+                        expect(this.scrollview.goToPage).toHaveBeenCalledWith(2);
+                    });
+
+                    it('should call Scrollview#goToNextPage() the correct number of times', function() {
+                        this.controller.goToPage(5);
+                        expect(this.scrollview.goToNextPage.calls.count()).toBe(5);
+                        expect(this.scrollview.goToPreviousPage.calls.count()).toBe(0);
+                    });
+
+                    it('should call Scrollview#goToPreviousPage() the correct number of times', function() {
+                        this.controller.goToPage(-4);
+                        expect(this.scrollview.goToNextPage.calls.count()).toBe(0);
+                        expect(this.scrollview.goToPreviousPage.calls.count()).toBe(4);
+                    });
+                });
+
+                it('#goToNextPage() should call the Scrollview method', function() {
                     unitHelper.compileDirectiveFamous.call(this, directivename,
                         '<yoo-slide-box>' +
-                        // '<yoo-slide>' + '</yoo-slide>' +
-                        // '<yoo-slide>' + '</yoo-slide>' +
-                        // '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
                         '</yoo-slide-box>'
                     );
                     var Scrollview = this.$famous['famous/views/Scrollview'];
 
-                    spyOn(Scrollview.prototype, 'goToPage');
+                    spyOn(Scrollview.prototype, 'goToNextPage');
 
-                    this.controller.goToPage(2);
-                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(2);
+                    this.controller.goToNextPage();
+                    expect(Scrollview.prototype.goToNextPage).toHaveBeenCalled();
                 });
 
-                xit('#goToPage() should wrap if index exceeds the bounds', function() {
-                    var self = this;
-                    unitHelper.compileDirectiveFamous.call(self, directivename,
+                it('#goToPreviousPage() should call the Scrollview method', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
                         '<yoo-slide-box>' +
                         '<yoo-slide>' + '</yoo-slide>' +
                         '<yoo-slide>' + '</yoo-slide>' +
                         '<yoo-slide>' + '</yoo-slide>' +
                         '</yoo-slide-box>'
                     );
-                    var Scrollview = self.$famous['famous/views/Scrollview'];
+                    var Scrollview = this.$famous['famous/views/Scrollview'];
 
-                    var currentIndex = 0;
+                    spyOn(Scrollview.prototype, 'goToPreviousPage');
 
-                    spyOn(Scrollview.prototype, 'getCurrentIndex').and.callFake(function() {
-                        return currentIndex;
-                    });
-
-                    spyOn(Scrollview.prototype, 'goToPage').and.callFake(function(index) {
-                        currentIndex = index;
-                    });
-
-                    self.controller.goToPage(5);
-                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(2);
-
-                    expect(self.controller.getCurrentIndex()).toBe(2);
-
-                    self.controller.goToPage(-2);
-                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(1);
-
-                    expect(self.controller.getCurrentIndex()).toBe(1);
-
+                    this.controller.previous();
+                    expect(Scrollview.prototype.goToPreviousPage).toHaveBeenCalled();
                 });
 
                 it('#currentIndex() should succeed', function() {
@@ -547,68 +654,7 @@ describe(app.name, function() {
 
                 });
 
-                it('#slide() should call the famo.us Scrollview and succeed', function() {
-                    var self = this;
-                    unitHelper.compileDirectiveFamous.call(self, directivename,
-                        '<yoo-slide-box>' +
-                        '<yoo-slide>' + '</yoo-slide>' +
-                        '<yoo-slide>' + '</yoo-slide>' +
-                        '<yoo-slide>' + '</yoo-slide>' +
-                        '</yoo-slide-box>'
-                    );
-                    var Scrollview = self.$famous['famous/views/Scrollview'];
-
-                    var currentIndex = 0;
-
-                    spyOn(Scrollview.prototype, 'getCurrentIndex').and.callFake(function() {
-                        return currentIndex;
-                    });
-
-                    spyOn(Scrollview.prototype, 'goToPage').and.callFake(function(index) {
-                        currentIndex = index;
-                    });
-
-                    self.controller.slide(2);
-                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(2);
-
-                    expect(self.controller.getCurrentIndex()).toBe(2);
-
-                });
-
-                xit('#slide() should wrap if index exceeds the bounds', function() {
-                    var self = this;
-                    unitHelper.compileDirectiveFamous.call(self, directivename,
-                        '<yoo-slide-box>' +
-                        '<yoo-slide>' + '</yoo-slide>' +
-                        '<yoo-slide>' + '</yoo-slide>' +
-                        '<yoo-slide>' + '</yoo-slide>' +
-                        '</yoo-slide-box>'
-                    );
-                    var Scrollview = self.$famous['famous/views/Scrollview'];
-
-                    var currentIndex = 0;
-
-                    spyOn(Scrollview.prototype, 'getCurrentIndex').and.callFake(function() {
-                        return currentIndex;
-                    });
-
-                    spyOn(Scrollview.prototype, 'goToPage').and.callFake(function(index) {
-                        currentIndex = index;
-                    });
-
-                    self.controller.slide(5);
-                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(2);
-
-                    expect(self.controller.getCurrentIndex()).toBe(2);
-
-                    self.controller.slide(-2);
-                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(1);
-
-                    expect(self.controller.getCurrentIndex()).toBe(1);
-
-                });
-
-                xit('#next() should succeed and wrap', function() {
+                it('#slide() should succeed', function() {
                     unitHelper.compileDirectiveFamous.call(this, directivename,
                         '<yoo-slide-box>' +
                         '<yoo-slide>' + '</yoo-slide>' +
@@ -616,33 +662,14 @@ describe(app.name, function() {
                         '<yoo-slide>' + '</yoo-slide>' +
                         '</yoo-slide-box>'
                     );
-                    var Scrollview = this.$famous['famous/views/Scrollview'];
 
-                    var currentIndex = 0;
+                    spyOn(this.controller, 'goToPage');
 
-                    spyOn(Scrollview.prototype, 'goToPage').and.callFake(function(index) {
-                        currentIndex = index;
-                    });
-                    spyOn(Scrollview.prototype, 'getCurrentIndex').and.callFake(function() {
-                        return currentIndex;
-                    });
-
-                    expect(this.controller.getCurrentIndex()).toBe(0);
-
-                    this.controller.next();
-                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(1);
-                    expect(this.controller.getCurrentIndex()).toBe(1);
-
-                    this.controller.next();
-                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(2);
-                    expect(this.controller.getCurrentIndex()).toBe(2);
-
-                    this.controller.next();
-                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(0);
-                    expect(this.controller.getCurrentIndex()).toBe(0);
+                    this.controller.slide(2);
+                    expect(this.controller.goToPage).toHaveBeenCalledWith(2);
                 });
 
-                xit('#previous() should succeed and wrap', function() {
+                it('#next() should succeed', function() {
                     unitHelper.compileDirectiveFamous.call(this, directivename,
                         '<yoo-slide-box>' +
                         '<yoo-slide>' + '</yoo-slide>' +
@@ -650,30 +677,24 @@ describe(app.name, function() {
                         '<yoo-slide>' + '</yoo-slide>' +
                         '</yoo-slide-box>'
                     );
-                    var Scrollview = this.$famous['famous/views/Scrollview'];
+                    spyOn(this.controller, 'goToNextPage');
 
-                    var currentIndex = 0;
+                    this.controller.next();
+                    expect(this.controller.goToNextPage).toHaveBeenCalled();
+                });
 
-                    spyOn(Scrollview.prototype, 'goToPage').and.callFake(function(index) {
-                        currentIndex = index;
-                    });
-                    spyOn(Scrollview.prototype, 'getCurrentIndex').and.callFake(function() {
-                        return currentIndex;
-                    });
-
-                    expect(this.controller.getCurrentIndex()).toBe(0);
-
-                    this.controller.previous();
-                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(2);
-                    expect(this.controller.getCurrentIndex()).toBe(2);
-
-                    this.controller.previous();
-                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(1);
-                    expect(this.controller.getCurrentIndex()).toBe(1);
+                it('#previous() should succeed', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+                    spyOn(this.controller, 'goToPreviousPage');
 
                     this.controller.previous();
-                    expect(Scrollview.prototype.goToPage).toHaveBeenCalledWith(0);
-                    expect(this.controller.getCurrentIndex()).toBe(0);
+                    expect(this.controller.goToPreviousPage).toHaveBeenCalled();
                 });
 
             });
@@ -711,6 +732,20 @@ describe(app.name, function() {
                     var index = 2;
                     this.slideBoxDelegate.slide(index);
                     expect(this.controller.slide).toHaveBeenCalledWith(index);
+                });
+
+                it('#enableSlide() should call directives enableSlide method from another controller', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+
+                    spyOn(this.controller, 'enableSlide');
+                    this.slideBoxDelegate.enableSlide(true);
+                    expect(this.controller.enableSlide).toHaveBeenCalledWith(true);
                 });
 
                 it('#getCurrentIndex() should call directives getCurrentIndex method from another controller', function() {
