@@ -6,7 +6,7 @@ module.exports = function(app) {
 
     var deps = ['$famous', app.namespace.core + '.famousHelper', '$timeout', app.namespace.core + '.slideBoxDelegate'];
 
-    function controller($scope, $famous, famousHelper, $timeout, slideBoxDelegate) {
+    function controller($famous, famousHelper, $timeout, slideBoxDelegate) {
         var vm = this;
         vm.message = 'Hello World';
         vm.goToPage = function(index) {
