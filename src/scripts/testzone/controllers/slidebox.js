@@ -15,21 +15,9 @@ module.exports = function(app) {
 
         vm.animations = ['animation1', 'animation2', 'standard'];
         vm.sidebarWidth = 250;
-        vm.getContentSize = function(){
+        vm.getContentSize = function() {
             return [window.innerWidth - vm.sidebarWidth, undefined];
-        }
-        // var EventHandler = $famous['famous/core/EventHandler'];
-        // $scope.eventHandler = new EventHandler();
-        // $scope.options = {
-        //   scrollViewOuter: {
-        //     direction: 0,
-        //     paginated: true
-        //   },
-        //   scrollViewInner :{
-        //     direction: 1
-        //   }
-        // };
-
+        };
     }
 
     controller.$inject = deps;
