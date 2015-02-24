@@ -85,6 +85,11 @@ module.exports = function(app) {
                 return !!this.sync._eventOutput.upstream.length;
             };
 
+            Scrollview.prototype.setLoop = function(shouldLoop) {
+                if(this._node) {
+                    this._node._.loop = shouldLoop;
+                }
+            };
         };
 
         return {

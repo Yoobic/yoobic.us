@@ -14,18 +14,18 @@ module.exports = function(app) {
         var EventHandler = $famous['famous/core/EventHandler'];
         yooSlideBoxCtrl.eventHandler = new EventHandler();
 
-        yooSlideBoxCtrl.getScrollview = function() {
-            if(!yooSlideBoxCtrl.scrollview) {
-                yooSlideBoxCtrl.scrollview = famousHelper.find('fa-scroll-view')[0];
-            }
-            return yooSlideBoxCtrl.scrollview;
-        };
-
         yooSlideBoxCtrl.scrollviewFaOptions = {
             direction: 0,
             paginated: true,
             pagePeriod: 300,
             pageDamp: 0.4
+        };
+
+        yooSlideBoxCtrl.getScrollview = function() {
+            if(!yooSlideBoxCtrl.scrollview) {
+                yooSlideBoxCtrl.scrollview = famousHelper.find('fa-scroll-view')[0];
+            }
+            return yooSlideBoxCtrl.scrollview;
         };
 
         /**********Exposed ScrollView Functions**********/
@@ -90,61 +90,13 @@ module.exports = function(app) {
             }
         };
 
-        /**********Ionic API Helper methods**********/
-
-        yooSlideBoxCtrl.cleanSlideDirection = function(slideDirection) {
-            slideDirection = slideDirection || yooSlideBoxCtrl.slideDirection;
-            if(slideDirection !== 'goToPreviousPage') {
-                slideDirection = 'goToNextPage';
-            }
-            return slideDirection;
-        };
-
-        yooSlideBoxCtrl.enableContinue = function(doesContinue) {
+        yooSlideBoxCtrl.setLoop = function(doesContinue) {
             if(yooSlideBoxCtrl.getScrollview()) {
-                $timeout(function() {
-                    $timeout(function() {
-                        yooSlideBoxCtrl.getScrollview().renderNode._node._.loop = doesContinue;
-                    });
-                });
-            }
-        };
-
-        yooSlideBoxCtrl.autoPlaySet = function(autoPlay) {
-            autoPlay = autoPlay !== undefined ? autoPlay : true;
-            if(autoPlay) {
-                yooSlideBoxCtrl.autoPlayTimeout = $timeout(function() {
-                    if(yooSlideBoxCtrl.autoPlay) {
-                        yooSlideBoxCtrl[yooSlideBoxCtrl.slideDirection]();
-                        yooSlideBoxCtrl.autoPlaySet();
-                    }
-                }, yooSlideBoxCtrl.slideInterval);
-                yooSlideBoxCtrl.autoPlayTimeout.cancel = $timeout.cancel;
-            } else {
-                yooSlideBoxCtrl.autoPlayCancel();
-            }
-        };
-
-        yooSlideBoxCtrl.autoPlayCancel = function() {
-            if(yooSlideBoxCtrl.autoPlayTimeout) {
-                yooSlideBoxCtrl.autoPlayTimeout.cancel();
-                delete yooSlideBoxCtrl.autoPlayTimeout;
+                yooSlideBoxCtrl.getScrollview().renderNode.setLoop(doesContinue);
             }
         };
 
         /**********Ionic Delegate Functions**********/
-
-        /*
-         * update() - Update the slidebox (for example if using Angular with ng-repeat, resize it for the elements inside).
-         * X! slide(to, [speed]) - Slide to `to` at speed `speed`
-         * XX enableSlide([shouldEnable]) - Returns boolean for whether sliding is enabled or not, shouldEnable dictates state
-         * XX previous() -  go to previous slide
-         * XX next() - go to next slide
-         * XX stop() - stop automatically sliding
-         * XX start() - start automatically sliding
-         * XX currentIndex() - get current index
-         * XX slidesCount() - return the total number of slides currently
-         */
 
         yooSlideBoxCtrl.slidesCount = function() {
             return yooSlideBoxCtrl.getTotalPages();
@@ -167,11 +119,21 @@ module.exports = function(app) {
         };
 
         yooSlideBoxCtrl.start = function() {
-            yooSlideBoxCtrl.autoPlaySet();
+            yooSlideBoxCtrl.stop();
+            yooSlideBoxCtrl.autoPlayTimeout = $timeout(function() {
+                if(yooSlideBoxCtrl.autoPlay) {
+                    yooSlideBoxCtrl[yooSlideBoxCtrl.slideDirection]();
+                    yooSlideBoxCtrl.start();
+                }
+            }, yooSlideBoxCtrl.slideInterval);
+            yooSlideBoxCtrl.autoPlayTimeout.cancel = $timeout.cancel.bind(this, yooSlideBoxCtrl.autoPlayTimeout);
         };
 
         yooSlideBoxCtrl.stop = function() {
-            yooSlideBoxCtrl.autoPlayCancel();
+            if(yooSlideBoxCtrl.autoPlayTimeout) {
+                yooSlideBoxCtrl.autoPlayTimeout.cancel();
+                delete yooSlideBoxCtrl.autoPlayTimeout;
+            }
         };
 
         /**********Setup Functions**********/
@@ -259,8 +221,6 @@ module.exports = function(app) {
     controller.$inject = controllerDeps;
 
     /*eslint-disable consistent-this */
-
-    // directive
     var directiveDeps = ['$famous', app.name + '.slideBoxDelegate'];
     var directive = function($famous, slideBoxDelegate) {
         return {
@@ -283,6 +243,12 @@ module.exports = function(app) {
             template: require('./yooSlideBox.html'),
             transclude: true,
             compile: function(tElement, tAttrs) {
+                function cleanSlideDirection(slideDirection) {
+                    if(slideDirection !== 'goToPreviousPage') {
+                        slideDirection = 'goToNextPage';
+                    }
+                    return slideDirection;
+                }
                 return {
                     pre: function(scope, element, attrs, ctrls) {
                         var yooSlideBoxCtrl = ctrls[0];
@@ -292,16 +258,16 @@ module.exports = function(app) {
 
                         yooSlideBoxCtrl.slideInterval = yooSlideBoxCtrl.slideInterval || 4000;
 
-                        yooSlideBoxCtrl.slideDirection = yooSlideBoxCtrl.cleanSlideDirection();
+                        yooSlideBoxCtrl.slideDirection = cleanSlideDirection(yooSlideBoxCtrl.slideDirection);
 
                         var deregisterInstance = slideBoxDelegate._registerInstance(
                             yooSlideBoxCtrl, attrs.delegateHandle
                         );
 
                         scope.$on('$destroy', function() {
+                            yooSlideBoxCtrl.stop();
                             deregisterInstance();
                         });
-
                     },
                     post: function(scope, element, attrs, ctrls) {
                         var yooSlideBoxCtrl = ctrls[0];
@@ -321,12 +287,19 @@ module.exports = function(app) {
                             }
                         });
 
-                        scope.$watch('yooSlideBoxCtrl.slideDirection', function(slideDirection) {
-                            yooSlideBoxCtrl.slideDirection = yooSlideBoxCtrl.cleanSlideDirection(slideDirection);
-                        });
-
-                        scope.$watch('yooSlideBoxCtrl.doesContinue', function(doesContinue) {
-                            yooSlideBoxCtrl.enableContinue(yooSlideBoxCtrl.doesContinue);
+                        var __postDigestQueued = false;
+                        scope.$$postDigest(function() {
+                            scope.$watch('yooSlideBoxCtrl.doesContinue', function(doesContinue) {
+                                if(__postDigestQueued) {
+                                    return;
+                                }
+                                __postDigestQueued = true;
+                                scope.$$postDigest(function() {
+                                    scope.$evalAsync('yooSlideBoxCtrl.setLoop(yooSlideBoxCtrl.doesContinue)');
+                                    __postDigestQueued = false;
+                                    scope.$digest();
+                                });
+                            });
                         });
 
                         scope.$watch(function() {
@@ -343,8 +316,19 @@ module.exports = function(app) {
                             }
                         });
 
-                        scope.$watch('yooSlideBoxCtrl.autoPlay', function(autoPlay) {
-                            yooSlideBoxCtrl.autoPlaySet(autoPlay);
+                        scope.$watch(function() {
+                            return {
+                                autoPlay: yooSlideBoxCtrl.autoPlay,
+                                slideInterval: yooSlideBoxCtrl.slideInterval,
+                                slideDirection: yooSlideBoxCtrl.slideDirection
+                            };
+                        }, function(newVal) {
+                            yooSlideBoxCtrl.slideDirection = cleanSlideDirection(newVal.slideDirection);
+                            if(newVal.autoPlay) {
+                                yooSlideBoxCtrl.start(); // start autoPlay $timeout loop
+                            } else {
+                                yooSlideBoxCtrl.stop(); // stop autoPlay & cancel $timeout
+                            }
                         }, true);
 
                         // $interval(function() {

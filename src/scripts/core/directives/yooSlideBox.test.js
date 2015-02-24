@@ -156,7 +156,6 @@ describe(app.name, function() {
 
                 vm.showPager = false;
                 this.$scope.$digest();
-                //console.log(element.html());
                 expect(element.find('yoo-pager').length).toBe(0);
 
             });
@@ -195,11 +194,42 @@ describe(app.name, function() {
                     '      <div class="test"></div>' +
                     '   </yoo-slide>' +
                     '</yoo-slide-box>');
-                spyOn(this.controller, 'enableContinue').and.callThrough();
+                expect(this.controller.doesContinue).toBe(false);
 
                 vm.doesContinue = true;
                 this.$scope.$digest();
-                expect(this.controller.enableContinue).toHaveBeenCalledWith(vm.doesContinue);
+                expect(this.controller.doesContinue).toBe(true);
+
+                vm.doesContinue = false;
+                this.$scope.$digest();
+                expect(this.controller.doesContinue).toBe(false);
+            });
+
+            xit('should set loop if does-continue is true', function(done) {
+                var vm = this.$scope.vm;
+                vm.doesContinue = false;
+                var element = unitHelper.compileDirectiveFamous.call(this, directivename,
+                    '<yoo-slide-box does-continue="vm.doesContinue">' +
+                    '   <yoo-slide>' +
+                    '      <div class="test"></div>' +
+                    '   </yoo-slide>' +
+                    '   <yoo-slide>' +
+                    '      <div class="test"></div>' +
+                    '   </yoo-slide>' +
+                    '</yoo-slide-box>');
+                this.$scope.$digest();
+                spyOn(this.controller, 'setLoop').and.callThrough();
+                var scrollview = this.$famous.find('fa-scroll-view', element)[0].renderNode;
+                expect(scrollview._node._.loop).toBeFalsy();
+                expect(scrollview._node.getPrevious()).toBeNull();
+                vm.doesContinue = true;
+                this.$scope.$digest();
+                setTimeout(function() {
+                    expect(scrollview._node._.loop).toBe(vm.doesContinue);
+                    expect(scrollview._node.getPrevious()).toBeTruthy();
+                    expect(this.controller.setLoop).toHaveBeenCalledWith(vm.doesContinue);
+                    done();
+                }.bind(this), 500);
             });
 
             it('should bind to auto-play', function() {
@@ -423,6 +453,21 @@ describe(app.name, function() {
 
             it('on-slide-change binding should run when changing slides', function() {
                 var vm = this.$scope.vm;
+                vm.changed = jasmine.createSpy();
+                unitHelper.compileDirectiveFamous.call(this, directivename,
+                    '<yoo-slide-box on-slide-changed="vm.changed()">' +
+                    '   <yoo-slide></yoo-slide>' +
+                    '   <yoo-slide></yoo-slide>' +
+                    '   <yoo-slide></yoo-slide>' +
+                    '   <yoo-slide></yoo-slide>' +
+                    '</yoo-slide-box>');
+                this.controller.goToNextPage();
+                expect(vm.changed).toHaveBeenCalled();
+
+            });
+
+            it('on-slide-change binding should run when changing slides', function() {
+                var vm = this.$scope.vm;
                 // vm.autoPlay = true;
                 // vm.slideInterval = 300;
                 vm.testFn1 = function() {};
@@ -561,20 +606,24 @@ describe(app.name, function() {
                         );
                         var scrollview = this.$famous.find('fa-scroll-view')[0].renderNode;
 
-                        var mocks = ['goToPage', 'goToNextPage', 'goToPreviousPage'];
+                        spyOn(scrollview, 'goToPage').and.callThrough();
+                        spyOn(scrollview, 'goToNextPage');
+                        spyOn(scrollview, 'goToPreviousPage');
 
-                        var createSpyInstance = function(instance, instanceName, mocks) {
-                            instance.originals = _(instance).pick(mocks).value();
+                        // var mocks = ['goToPage', 'goToNextPage', 'goToPreviousPage'];
 
-                            _(instance).assign(jasmine.createSpyObj(instanceName, mocks));
+                        // var createSpyInstance = function(instance, instanceName, mocks) {
+                        //     instance.originals = _(instance).pick(mocks).value();
 
-                            _(instance.originals).forEach(function(origFn, mockName) {
-                                instance[mockName].and.callFake(origFn.bind(instance));
-                            });
-                            return instance;
-                        };
+                        //     _(instance).assign(jasmine.createSpyObj(instanceName, mocks));
 
-                        scrollview = createSpyInstance(scrollview, 'scrollview', mocks);
+                        //     _(instance.originals).forEach(function(origFn, mockName) {
+                        //         instance[mockName].and.callFake(origFn.bind(instance));
+                        //     });
+                        //     return instance;
+                        // };
+
+                        // scrollview = createSpyInstance(scrollview, 'scrollview', mocks);
 
                         this.scrollview = {
                             goToPage: scrollview.goToPage,
@@ -633,8 +682,24 @@ describe(app.name, function() {
 
                     spyOn(Scrollview.prototype, 'goToPreviousPage');
 
-                    this.controller.previous();
+                    this.controller.goToPreviousPage();
                     expect(Scrollview.prototype.goToPreviousPage).toHaveBeenCalled();
+                });
+
+                it('#enableSlide() should call the Scrollview method', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+                    var Scrollview = this.$famous['famous/views/Scrollview'];
+
+                    spyOn(Scrollview.prototype, 'enableSlide');
+
+                    this.controller.enableSlide();
+                    expect(Scrollview.prototype.enableSlide).toHaveBeenCalled();
                 });
 
                 it('#currentIndex() should succeed', function() {
@@ -645,13 +710,27 @@ describe(app.name, function() {
                         '<yoo-slide>' + '</yoo-slide>' +
                         '</yoo-slide-box>'
                     );
-                    var Scrollview = this.$famous['famous/views/Scrollview'];
 
-                    spyOn(Scrollview.prototype, 'getCurrentIndex').and.returnValue(7);
+                    spyOn(this.controller, 'getCurrentIndex').and.returnValue(7);
                     var index = this.controller.currentIndex();
-                    expect(Scrollview.prototype.getCurrentIndex).toHaveBeenCalled();
+                    expect(this.controller.getCurrentIndex).toHaveBeenCalled();
                     expect(index).toBe(7);
 
+                });
+
+                it('#slidesCount() should succeed', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+
+                    spyOn(this.controller, 'getTotalPages').and.returnValue(7);
+                    var count = this.controller.slidesCount();
+                    expect(this.controller.getTotalPages).toHaveBeenCalled();
+                    expect(count).toBe(7);
                 });
 
                 it('#slide() should succeed', function() {

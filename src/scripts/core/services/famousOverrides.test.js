@@ -23,6 +23,7 @@ describe(app.name, function() {
                 }
                 return surfaces;
             };
+
             beforeEach(function() {
                 angular.mock.module(app.name);
             });
@@ -35,6 +36,10 @@ describe(app.name, function() {
 
             beforeEach(function() {
                 this.service.apply();
+            });
+
+            afterEach(function() {
+                delete this.Scrollview;
             });
 
             it('should be defined', function() {
@@ -77,19 +82,26 @@ describe(app.name, function() {
             });
 
             it('getAbsolutePosition() with surfaces should succeed', function(done) {
-
                 var scrollview = new this.Scrollview();
                 var Engine = this.$famous['famous/core/Engine'];
                 var Modifier = this.$famous['famous/core/Modifier'];
+                // var ViewSequence = this.$famous['famous/core/ViewSequence'];
                 var modifier = new Modifier({
                     size: [100, 100]
                 });
 
+                // var options = {
+                //     array: createSurfaces.call(this)
+                //     // trackSize: true
+                // };
+
+                // var viewSeq = new ViewSequence(options);
+
+                // scrollview.sequenceFrom(viewSeq);
+
                 scrollview.sequenceFrom(createSurfaces.call(this));
                 Engine.createContext().add(modifier).add(scrollview);
-
                 scrollview.goToLast();
-
                 setTimeout(function() {
                     var absolutePosition = scrollview.getAbsolutePosition();
 
@@ -100,7 +112,6 @@ describe(app.name, function() {
             });
 
             it('getContainerSize() with surfaces should succeed', function(done) {
-
                 var expectedSize = [200, 300];
                 var scrollview = new this.Scrollview();
                 var Engine = this.$famous['famous/core/Engine'];
@@ -111,11 +122,11 @@ describe(app.name, function() {
                 });
 
                 // var options = {
-                //     array: createSurfaces.call(this),
-                //     trackSize: true
-                // }
+                //     array: createSurfaces.call(this)
+                //     // trackSize: true
+                // };
 
-                // var viewSeq = new ViewSequence(options)
+                // var viewSeq = new ViewSequence(options);
 
                 // scrollview.sequenceFrom(viewSeq);
                 scrollview.sequenceFrom(createSurfaces.call(this));
@@ -277,6 +288,25 @@ describe(app.name, function() {
                 });
             });
 
+            it('setLoop() should succeed', function() {
+
+                var scrollview = new this.Scrollview();
+                var Engine = this.$famous['famous/core/Engine'];
+                var Surface = this.$famous['famous/core/Surface'];
+
+                var surface = new Surface({
+                        content: 'toto',
+                        size: [100, 100]
+                    });
+
+                scrollview.sequenceFrom([surface]);
+                Engine.createContext().add(scrollview);
+                expect(scrollview._node._.loop).toBe(false);
+                scrollview.setLoop(true);
+                expect(scrollview._node._.loop).toBe(true);
+                scrollview.setLoop(false);
+                expect(scrollview._node._.loop).toBe(false);
+            });
         });
     });
 });

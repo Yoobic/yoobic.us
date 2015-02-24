@@ -26,25 +26,7 @@ module.exports = function(app) {
         vm.toggleAutoPlay = function() {
             vm.autoPlay = !vm.autoPlay;
         };
-        vm.slideDirections = [{
-            label: 'goToNextPage',
-            value: 'goToNextPage'
-        }, {
-            label: 'goToPreviousPage',
-            value: 'goToPreviousPage'
-        }, {
-            label: 'forward',
-            value: 'forward'
-        }, {
-            label: 'backward',
-            value: 'backward'
-        }, {
-            label: '-2',
-            value: -2
-        }, {
-            label: '1.5',
-            value: 1.5
-        }];
+        vm.slideDirections = ['goToNextPage', 'goToPreviousPage', 'invalidDirection'];
         vm.activeSlides = [0, 1, 2, 3, 4, 5];
         vm.slideIntervals = [5, 500, 750, 1000, 2000, 4000, 8000, 30000];
         vm.animations = ['animation1', 'animation2', 'standard'];
