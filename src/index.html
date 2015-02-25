@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/ico" href="favicon.ico">
+    <link rel="icon" type="image/ico" href="images/yoobic-favicon.ico">
     <!--[if IE]>
     <link rel="shortcut icon" href="/favicon.ico" type="image/vnd.microsoft.icon">
     <![endif]-->
@@ -16,11 +16,25 @@
     <!--[if lt IE 7]>
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
     <![endif]-->
-    <fa-app class="full-screen">
-        <ui-view></ui-view>
+    <fa-app ng-controller="main.testzone.slidebox as vm" class="full-screen">
+        <fa-sequential-layout fa-options="{direction: 0}">
+            <fa-surface fa-properties="{zIndex: 1000}" fa-background-color="'black'" fa-size="[vm.sidebarWidth, undefined]">
+                <div id="sidebar-wrapper">
+                    <ul class="sidebar-nav">
+                        <li class="sidebar-brand">
+                            <a ui-sref="home">Yoobic Components</a>
+                        </li>
+                        <li>
+                            <a ui-sref="slidebox">Slidebox</a>
+                        </li>
+                    </ul>
+                </div>
+            </fa-surface>
+            <fa-modifier fa-size="vm.getContentSize()">
+                <ui-view></ui-view>
+            </fa-modifier>
+        </fa-sequential-layout>
     </fa-app>
-
     <script src="yoobic.us.js"></script>
 </body>
-
 </html>

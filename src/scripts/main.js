@@ -3,7 +3,6 @@
 var namespace = 'main';
 
 var angular = require('angular');
-
 var app = angular.module(namespace, [
     // inject:modules start
     require('./core')(namespace).name,

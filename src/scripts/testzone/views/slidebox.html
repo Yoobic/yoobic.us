@@ -1,53 +1,60 @@
 <fa-view>
-    <fa-header-footer-layout fa-options="{headerSize:0, footerSize: 120}">
+
+    <fa-header-footer-layout fa-options="{direction:0, headerSize:0, footerSize:175}">
         <fa-modifier>
             <fa-surface fa-background-color="'white'">
-
             </fa-surface>
         </fa-modifier>
-        <yoo-slide-box on-slide-changed="slideHasChanged($index)" show-pager="true" animation-type="{{vm.animation}}" delegate-handle="myslidebox">
-            <yoo-slide>
-                <div class="box blue">
-                    <h1>BLUE</h1>
-                </div>
-            </yoo-slide>
-            <yoo-slide>
-                <div class="box yellow">
-                    <h1>YELLOW</h1>
-                </div>
-            </yoo-slide>
-            <yoo-slide>
-                <div class="box pink">
-                    <h1>PINK</h1>
-                </div>
-            </yoo-slide>
-            <yoo-slide>
-                <div class="box red">
-                    <h1>RED</h1>
-                </div>
-            </yoo-slide>
-            <yoo-slide>
-                <div class="box green">
-                    <h1>GREEN</h1>
-                </div>
-            </yoo-slide>
-            <yoo-slide>
-                <div class="box purple">
-                    <h1>PURPLE</h1>
-                </div>
-            </yoo-slide>
-        </yoo-slide-box>
-
-        <fa-modifier fa-size="[undefined,100]">
-            <fa-modifier fa-origin="[0.5,0.75]" fa-align="[0.5,0.75]" fa-size="[200,56]">
-                <fa-surface>
-                    <button class="button button-assertive" ng-click="vm.goToPage(3)">Click</button>
-                    <select ng-model="vm.animation" ng-options="animation for animation in vm.animations">
-
-                    </select>
-
+        <fa-modifier fa-size="vm.getVisualPhoneSize()" fa-origin="[.5,.5]" fa-align="[.5,.5]">
+            <fa-surface fa-properties="vm.getVisualPhoneCaseProperties()">
+            </fa-surface>
+            <fa-modifier fa-size="vm.getVisualPhoneScreenSize()" fa-origin="[.5,.5]" fa-align="[.5,.5]">
+                <fa-surface fa-background-color="'white'" fa-properties="{zIndex:1}">
                 </fa-surface>
             </fa-modifier>
+            <fa-modifier fa-size="vm.getVisualPhoneScreenSize()" fa-origin="[.5,.5]" fa-align="[.5,.5]">
+                <fa-container-surface fa-options="{properties: {overflow: 'hidden', perspective:'500px', '-webkit-perspective':'500', zIndex:2}}">
+                    <yoo-slide-box on-slide-changed="slideHasChanged($index)" show-pager="true" animation-type="{{vm.animation}}" delegate-handle="myslidebox">
+                        <yoo-slide>
+                            <div class="box blue">
+                                <h1>BLUE</h1>
+                            </div>
+                        </yoo-slide>
+                        <yoo-slide>
+                            <div class="box yellow">
+                                <h1>YELLOW</h1>
+                            </div>
+                        </yoo-slide>
+                        <yoo-slide>
+                            <div class="box pink">
+                                <h1>PINK</h1>
+                            </div>
+                        </yoo-slide>
+                        <yoo-slide>
+                            <div class="box red">
+                                <h1>RED</h1>
+                            </div>
+                        </yoo-slide>
+                        <yoo-slide>
+                            <div class="box green">
+                                <h1>GREEN</h1>
+                            </div>
+                        </yoo-slide>
+                        <yoo-slide>
+                            <div class="box purple">
+                                <h1>PURPLE</h1>
+                            </div>
+                        </yoo-slide>
+                    </yoo-slide-box>
+                </fa-container-surface>
+            </fa-modifier>
+        </fa-modifier>
+        <fa-modifier fa-size="[vm.settingsWidth,undefined]">
+            <fa-surface fa-background-color="'black'" fa-size="[vm.settingsWidth,undefined]">
+                <button class="button button-assertive" ng-click="vm.goToPage(3)">Click</button>
+                <select ng-model="vm.animation" ng-options="animation for animation in vm.animations">
+                </select>
+            </fa-surface>
         </fa-modifier>
     </fa-header-footer-layout>
 </fa-view>
