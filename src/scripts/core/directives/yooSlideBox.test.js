@@ -205,31 +205,21 @@ describe(app.name, function() {
                 expect(this.controller.doesContinue).toBe(false);
             });
 
-            xit('should set loop if does-continue is true', function(done) {
+            it('should set loop if does-continue is true', function() {
                 var vm = this.$scope.vm;
                 vm.doesContinue = false;
-                var element = unitHelper.compileDirectiveFamous.call(this, directivename,
+                unitHelper.compileDirective.call(this, directivename,
                     '<yoo-slide-box does-continue="vm.doesContinue">' +
                     '   <yoo-slide>' +
-                    '      <div class="test"></div>' +
                     '   </yoo-slide>' +
                     '   <yoo-slide>' +
-                    '      <div class="test"></div>' +
                     '   </yoo-slide>' +
                     '</yoo-slide-box>');
-                this.$scope.$digest();
-                spyOn(this.controller, 'setLoop').and.callThrough();
-                var scrollview = this.$famous.find('fa-scroll-view', element)[0].renderNode;
-                expect(scrollview._node._.loop).toBeFalsy();
-                expect(scrollview._node.getPrevious()).toBeNull();
+                spyOn(this.controller, 'setLoop');
+
                 vm.doesContinue = true;
                 this.$scope.$digest();
-                setTimeout(function() {
-                    expect(scrollview._node._.loop).toBe(vm.doesContinue);
-                    expect(scrollview._node.getPrevious()).toBeTruthy();
-                    expect(this.controller.setLoop).toHaveBeenCalledWith(vm.doesContinue);
-                    done();
-                }.bind(this), 500);
+                expect(this.controller.setLoop).toHaveBeenCalledWith(vm.doesContinue);
             });
 
             it('should bind to auto-play', function() {
@@ -610,30 +600,7 @@ describe(app.name, function() {
                         spyOn(scrollview, 'goToNextPage');
                         spyOn(scrollview, 'goToPreviousPage');
 
-                        // var mocks = ['goToPage', 'goToNextPage', 'goToPreviousPage'];
-
-                        // var createSpyInstance = function(instance, instanceName, mocks) {
-                        //     instance.originals = _(instance).pick(mocks).value();
-
-                        //     _(instance).assign(jasmine.createSpyObj(instanceName, mocks));
-
-                        //     _(instance.originals).forEach(function(origFn, mockName) {
-                        //         instance[mockName].and.callFake(origFn.bind(instance));
-                        //     });
-                        //     return instance;
-                        // };
-
-                        // scrollview = createSpyInstance(scrollview, 'scrollview', mocks);
-
-                        this.scrollview = {
-                            goToPage: scrollview.goToPage,
-                            goToNextPage: scrollview.goToNextPage,
-                            goToPreviousPage: scrollview.goToPreviousPage
-                        };
-                    });
-
-                    afterEach(function() {
-                        delete this.scrollview;
+                        this.scrollview = scrollview;
                     });
 
                     it('should call the Scrollview method', function() {
@@ -652,6 +619,53 @@ describe(app.name, function() {
                         expect(this.scrollview.goToNextPage.calls.count()).toBe(0);
                         expect(this.scrollview.goToPreviousPage.calls.count()).toBe(4);
                     });
+                });
+
+                it('#start() should enable autoPlay', function() {
+                    unitHelper.compileDirective.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '</yoo-slide-box>');
+                    expect(this.controller.autoPlay).toBeFalsy();
+                    spyOn(this.controller, 'goToNextPage');
+
+                    this.controller.start();
+                    this.$scope.$digest();
+
+                    this.$timeout.flush(4000);
+                    this.$timeout.flush(4000);
+                    this.$timeout.flush(4000);
+                    expect(this.controller.goToNextPage.calls.count()).toBe(3);
+                });
+
+                it('#stop() should disable autoPlay', function() {
+                    var vm = this.$scope.vm;
+                    vm.autoPlay = true;
+                    unitHelper.compileDirective.call(this, directivename,
+                        '<yoo-slide-box auto-play="vm.autoPlay">' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '   <yoo-slide></yoo-slide>' +
+                        '</yoo-slide-box>');
+                    expect(this.controller.autoPlay).toBe(true);
+                    spyOn(this.controller, 'goToNextPage');
+
+                    this.$timeout.flush(4000);
+                    this.$timeout.flush(4000);
+                    this.$timeout.flush(4000);
+                    expect(this.controller.goToNextPage.calls.count()).toBe(3);
+                    this.controller.goToNextPage.calls.reset();
+
+                    this.controller.stop();
+                    this.$scope.$digest();
+                    this.$scope.$digest();
+
+                    this.$timeout.flush(4000);
+                    this.$timeout.flush(4000);
+                    this.$timeout.flush(4000);
+                    expect(this.controller.goToNextPage.calls.count()).toBe(0);
                 });
 
                 it('#goToNextPage() should call the Scrollview method', function() {
@@ -813,20 +827,6 @@ describe(app.name, function() {
                     expect(this.controller.slide).toHaveBeenCalledWith(index);
                 });
 
-                it('#enableSlide() should call directives enableSlide method from another controller', function() {
-                    unitHelper.compileDirectiveFamous.call(this, directivename,
-                        '<yoo-slide-box>' +
-                        '<yoo-slide>' + '</yoo-slide>' +
-                        '<yoo-slide>' + '</yoo-slide>' +
-                        '<yoo-slide>' + '</yoo-slide>' +
-                        '</yoo-slide-box>'
-                    );
-
-                    spyOn(this.controller, 'enableSlide');
-                    this.slideBoxDelegate.enableSlide(true);
-                    expect(this.controller.enableSlide).toHaveBeenCalledWith(true);
-                });
-
                 it('#getCurrentIndex() should call directives getCurrentIndex method from another controller', function() {
                     unitHelper.compileDirectiveFamous.call(this, directivename,
                         '<yoo-slide-box>' +
@@ -883,6 +883,20 @@ describe(app.name, function() {
                     expect(this.controller.slidesCount).toHaveBeenCalled();
                 });
 
+                it('#goToPreviousPage() should call directives goToPreviousPage method from another controller', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+
+                    spyOn(this.controller, 'goToPreviousPage');
+                    this.slideBoxDelegate.goToPreviousPage();
+                    expect(this.controller.goToPreviousPage).toHaveBeenCalled();
+                });
+
                 it('#previous() should call directives previous method from another controller', function() {
                     unitHelper.compileDirectiveFamous.call(this, directivename,
                         '<yoo-slide-box>' +
@@ -897,6 +911,20 @@ describe(app.name, function() {
                     expect(this.controller.previous).toHaveBeenCalled();
                 });
 
+                it('#goToNextPage() should call directives goToNextPage method from another controller', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+
+                    spyOn(this.controller, 'goToNextPage');
+                    this.slideBoxDelegate.goToNextPage();
+                    expect(this.controller.goToNextPage).toHaveBeenCalled();
+                });
+
                 it('#next() should call directives next method from another controller', function() {
                     unitHelper.compileDirectiveFamous.call(this, directivename,
                         '<yoo-slide-box>' +
@@ -909,6 +937,48 @@ describe(app.name, function() {
                     spyOn(this.controller, 'next');
                     this.slideBoxDelegate.next();
                     expect(this.controller.next).toHaveBeenCalled();
+                });
+
+                it('#enableSlide() should call directives enableSlide method from another controller', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+
+                    spyOn(this.controller, 'enableSlide');
+                    this.slideBoxDelegate.enableSlide(true);
+                    expect(this.controller.enableSlide).toHaveBeenCalledWith(true);
+                });
+
+                it('#start() should call directives start method from another controller', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+
+                    spyOn(this.controller, 'start');
+                    this.slideBoxDelegate.start();
+                    expect(this.controller.start).toHaveBeenCalled();
+                });
+
+                it('#stop() should call directives stop method from another controller', function() {
+                    unitHelper.compileDirectiveFamous.call(this, directivename,
+                        '<yoo-slide-box>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '<yoo-slide>' + '</yoo-slide>' +
+                        '</yoo-slide-box>'
+                    );
+
+                    spyOn(this.controller, 'stop');
+                    this.slideBoxDelegate.stop();
+                    expect(this.controller.stop).toHaveBeenCalled();
                 });
 
                 it('should deregister on $destroy', function() {

@@ -119,17 +119,23 @@ module.exports = function(app) {
         };
 
         yooSlideBoxCtrl.start = function() {
-            yooSlideBoxCtrl.stop();
+            yooSlideBoxCtrl.autoPlay = true;
+        };
+
+        yooSlideBoxCtrl.stop = function() {
+            yooSlideBoxCtrl.autoPlay = false;
+        };
+
+        yooSlideBoxCtrl.startInner = function() {
+            yooSlideBoxCtrl.stopInner();
             yooSlideBoxCtrl.autoPlayTimeout = $timeout(function() {
-                if(yooSlideBoxCtrl.autoPlay) {
-                    yooSlideBoxCtrl[yooSlideBoxCtrl.slideDirection]();
-                    yooSlideBoxCtrl.start();
-                }
+                yooSlideBoxCtrl[yooSlideBoxCtrl.slideDirection]();
+                yooSlideBoxCtrl.startInner();
             }, yooSlideBoxCtrl.slideInterval);
             yooSlideBoxCtrl.autoPlayTimeout.cancel = $timeout.cancel.bind(this, yooSlideBoxCtrl.autoPlayTimeout);
         };
 
-        yooSlideBoxCtrl.stop = function() {
+        yooSlideBoxCtrl.stopInner = function() {
             if(yooSlideBoxCtrl.autoPlayTimeout) {
                 yooSlideBoxCtrl.autoPlayTimeout.cancel();
                 delete yooSlideBoxCtrl.autoPlayTimeout;
@@ -227,13 +233,14 @@ module.exports = function(app) {
             require: ['yooSlideBox'],
             restrict: 'AE',
             scope: {
+                animationType: '@',
                 pagerClick: '&',
                 activeSlide: '=?',
                 onSlideChanged: '&',
                 showPager: '=',
-                animationType: '@',
-                doesContinue: '=?',
                 autoPlay: '=?',
+                // TODO: use directiveBinder.toPrimitive() and '@' one-way bindings
+                doesContinue: '=?',
                 slideDirection: '=?',
                 slideInterval: '=?'
             },
@@ -265,7 +272,7 @@ module.exports = function(app) {
                         );
 
                         scope.$on('$destroy', function() {
-                            yooSlideBoxCtrl.stop();
+                            yooSlideBoxCtrl.stopInner();
                             deregisterInstance();
                         });
                     },
@@ -287,18 +294,16 @@ module.exports = function(app) {
                             }
                         });
 
+                        // TODO: use $watchPostDigest
                         var __postDigestQueued = false;
-                        scope.$$postDigest(function() {
-                            scope.$watch('yooSlideBoxCtrl.doesContinue', function(doesContinue) {
-                                if(__postDigestQueued) {
-                                    return;
-                                }
-                                __postDigestQueued = true;
-                                scope.$$postDigest(function() {
-                                    scope.$evalAsync('yooSlideBoxCtrl.setLoop(yooSlideBoxCtrl.doesContinue)');
-                                    __postDigestQueued = false;
-                                    scope.$digest();
-                                });
+                        scope.$watch('yooSlideBoxCtrl.doesContinue', function(doesContinue, oldDoesContinue) {
+                            if(__postDigestQueued) {
+                                return;
+                            }
+                            __postDigestQueued = true;
+                            scope.$$postDigest(function() {
+                                __postDigestQueued = false;
+                                yooSlideBoxCtrl.setLoop(yooSlideBoxCtrl.doesContinue);
                             });
                         });
 
@@ -322,12 +327,15 @@ module.exports = function(app) {
                                 slideInterval: yooSlideBoxCtrl.slideInterval,
                                 slideDirection: yooSlideBoxCtrl.slideDirection
                             };
-                        }, function(newVal) {
-                            yooSlideBoxCtrl.slideDirection = cleanSlideDirection(newVal.slideDirection);
+                        }, function(newVal, oldVal) {
+                            if(newVal.slideDirection !== oldVal.slideDirection) {
+                                yooSlideBoxCtrl.slideDirection = cleanSlideDirection(newVal.slideDirection);
+                            }
+
                             if(newVal.autoPlay) {
-                                yooSlideBoxCtrl.start(); // start autoPlay $timeout loop
+                                yooSlideBoxCtrl.startInner(); // start autoPlay $timeout loop
                             } else {
-                                yooSlideBoxCtrl.stop(); // stop autoPlay & cancel $timeout
+                                yooSlideBoxCtrl.stopInner(); // stop autoPlay & cancel $timeout
                             }
                         }, true);
 

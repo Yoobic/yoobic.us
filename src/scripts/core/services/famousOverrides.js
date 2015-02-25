@@ -87,7 +87,11 @@ module.exports = function(app) {
 
             Scrollview.prototype.setLoop = function(shouldLoop) {
                 if(this._node) {
+                    this._node.render();
                     this._node._.loop = shouldLoop;
+                //     this.getCurrentIndex();
+                //     console.log('firstIndex ',this._node._.firstIndex );
+                //     this._node._.reindex(0, 0, this._node._.array.length);
                 }
             };
         };

@@ -85,26 +85,18 @@ describe(app.name, function() {
                 var scrollview = new this.Scrollview();
                 var Engine = this.$famous['famous/core/Engine'];
                 var Modifier = this.$famous['famous/core/Modifier'];
-                // var ViewSequence = this.$famous['famous/core/ViewSequence'];
+
                 var modifier = new Modifier({
                     size: [100, 100]
                 });
 
-                // var options = {
-                //     array: createSurfaces.call(this)
-                //     // trackSize: true
-                // };
-
-                // var viewSeq = new ViewSequence(options);
-
-                // scrollview.sequenceFrom(viewSeq);
-
                 scrollview.sequenceFrom(createSurfaces.call(this));
                 Engine.createContext().add(modifier).add(scrollview);
+
                 scrollview.goToLast();
+
                 setTimeout(function() {
                     var absolutePosition = scrollview.getAbsolutePosition();
-
                     expect(absolutePosition >= (numberOfSurfaces - 1.5) * 100).toBeTruthy();
                     done();
                 }, waitTime);
@@ -116,19 +108,11 @@ describe(app.name, function() {
                 var scrollview = new this.Scrollview();
                 var Engine = this.$famous['famous/core/Engine'];
                 var Modifier = this.$famous['famous/core/Modifier'];
-                // var ViewSequence = this.$famous['famous/core/ViewSequence'];
+
                 var modifier = new Modifier({
                     size: expectedSize
                 });
 
-                // var options = {
-                //     array: createSurfaces.call(this)
-                //     // trackSize: true
-                // };
-
-                // var viewSeq = new ViewSequence(options);
-
-                // scrollview.sequenceFrom(viewSeq);
                 scrollview.sequenceFrom(createSurfaces.call(this));
                 Engine.createContext().add(modifier).add(scrollview);
 
@@ -295,17 +279,20 @@ describe(app.name, function() {
                 var Surface = this.$famous['famous/core/Surface'];
 
                 var surface = new Surface({
-                        content: 'toto',
-                        size: [100, 100]
-                    });
+                    content: 'toto',
+                    size: [100, 100]
+                });
 
                 scrollview.sequenceFrom([surface]);
                 Engine.createContext().add(scrollview);
                 expect(scrollview._node._.loop).toBe(false);
+                expect(scrollview._node.getNext()).toBeNull();
                 scrollview.setLoop(true);
                 expect(scrollview._node._.loop).toBe(true);
+                expect(scrollview._node.getNext()).toBeTruthy();
                 scrollview.setLoop(false);
                 expect(scrollview._node._.loop).toBe(false);
+                expect(scrollview._node.getNext()).toBeNull();
             });
         });
     });

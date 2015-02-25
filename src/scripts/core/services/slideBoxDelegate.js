@@ -5,7 +5,6 @@ module.exports = function(app) {
     app.factory(app.name + '.' + servicename, require('../utils/delegateService')([
         'goToPage',
         'slide',
-        'enableSlide',
         'getCurrentIndex',
         'currentIndex',
         'getTotalPages',
@@ -13,6 +12,9 @@ module.exports = function(app) {
         'goToPreviousPage',
         'previous',
         'goToNextPage',
-        'next'
+        'next',
+        'enableSlide',
+        'start',
+        'stop'
     ]));
 };
