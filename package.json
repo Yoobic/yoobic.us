@@ -20,7 +20,7 @@
   "main": "./src/scripts/core/index.js",
   "dependencies": {
     "famous-polyfills": "^0.3.0",
-    "yoobic-angular-core": "0.0.12"
+    "yoobic-angular-core": "0.0.14"
   },
   "devDependencies": {
     "brfs": "1.2.0",
