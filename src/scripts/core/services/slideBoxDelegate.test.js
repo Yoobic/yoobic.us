@@ -24,6 +24,10 @@ describe(app.name, function() {
             it('should expose a goToPage method', function() {
                 expect(this.service.goToPage).toBeDefined();
             });
+
+            it('should expose a getTotalPages method', function() {
+                expect(this.service.getTotalPages).toBeDefined();
+            });
         });
     });
 });

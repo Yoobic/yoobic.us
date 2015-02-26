@@ -1,8 +1,9 @@
 'use strict';
 var angular = require('angular-mocks');
 var app = require('../')('app');
-var servicename = 'famousOverrides';
+var unitHelper = require('unitHelper');
 var _ = require('lodash');
+var servicename = 'famousOverrides';
 
 describe(app.name, function() {
 
@@ -22,6 +23,7 @@ describe(app.name, function() {
                 }
                 return surfaces;
             };
+
             beforeEach(function() {
                 angular.mock.module(app.name);
             });
@@ -34,6 +36,10 @@ describe(app.name, function() {
 
             beforeEach(function() {
                 this.service.apply();
+            });
+
+            afterEach(function() {
+                delete this.Scrollview;
             });
 
             it('should be defined', function() {
@@ -76,10 +82,10 @@ describe(app.name, function() {
             });
 
             it('getAbsolutePosition() with surfaces should succeed', function(done) {
-
                 var scrollview = new this.Scrollview();
                 var Engine = this.$famous['famous/core/Engine'];
                 var Modifier = this.$famous['famous/core/Modifier'];
+
                 var modifier = new Modifier({
                     size: [100, 100]
                 });
@@ -91,7 +97,6 @@ describe(app.name, function() {
 
                 setTimeout(function() {
                     var absolutePosition = scrollview.getAbsolutePosition();
-
                     expect(absolutePosition >= (numberOfSurfaces - 1.5) * 100).toBeTruthy();
                     done();
                 }, waitTime);
@@ -99,11 +104,11 @@ describe(app.name, function() {
             });
 
             it('getContainerSize() with surfaces should succeed', function(done) {
-
                 var expectedSize = [200, 300];
                 var scrollview = new this.Scrollview();
                 var Engine = this.$famous['famous/core/Engine'];
                 var Modifier = this.$famous['famous/core/Modifier'];
+
                 var modifier = new Modifier({
                     size: expectedSize
                 });
@@ -161,7 +166,6 @@ describe(app.name, function() {
             });
 
             it('getTotalPages() with surfaces should succeed', function() {
-
                 var expectedSize = [200, 300];
                 var scrollview = new this.Scrollview();
                 var Engine = this.$famous['famous/core/Engine'];
@@ -198,6 +202,98 @@ describe(app.name, function() {
                 expect(_(scrollview.sync._eventInput.listeners).has('mouseup')).toBeTruthy();
             });
 
+            describe('#enableSlide()', function() {
+                beforeEach(function() {
+                    var scrollview = new this.Scrollview();
+                    var Engine = this.$famous['famous/core/Engine'];
+                    var Surface = this.$famous['famous/core/Surface'];
+                    var EventHandler = this.$famous['famous/core/EventHandler'];
+
+                    var eventHandler = new EventHandler();
+
+                    var surface = new Surface({
+                        content: 'toto',
+                        size: [100, 100]
+                    });
+
+                    surface.pipe(scrollview);
+                    scrollview.sequenceFrom([surface]);
+                    Engine.createContext().add(scrollview);
+                    eventHandler.pipe(scrollview);
+
+                    this.scrollview = scrollview;
+                    this.surface = surface;
+                });
+
+                it('should call enableSync() and succeed', function() {
+                    var slideEnabled = this.scrollview.enableSlide(true);
+
+                    expect(this.scrollview._touchCount).toBe(0);
+                    this.surface._eventOutput.emit('mousewheel', unitHelper.mockEvent({
+                        count: 1
+                    }));
+
+                    expect(this.scrollview._touchCount).toBe(1);
+                    expect(slideEnabled).toBe(true);
+                });
+
+                it('should call disableSync() and succeed', function() {
+                    var slideEnabled = this.scrollview.enableSlide(false);
+
+                    expect(this.scrollview._touchCount).toBe(0);
+                    this.surface._eventOutput.emit('mousewheel', unitHelper.mockEvent({
+                        count: 1
+                    }));
+
+                    expect(this.scrollview._touchCount).toBe(0);
+                    expect(slideEnabled).toBe(false);
+                });
+
+                it('should return the current setting when not called with an argument', function() {
+                    expect(this.scrollview._touchCount).toBe(0);
+
+                    this.scrollview.enableSlide(true);
+                    var slideEnabled = this.scrollview.enableSlide();
+                    expect(slideEnabled).toBe(true);
+
+                    this.surface._eventOutput.emit('mousewheel', unitHelper.mockEvent({
+                        count: 1
+                    }));
+                    expect(this.scrollview._touchCount).toBe(1);
+
+                    this.scrollview.enableSlide(false);
+                    var slideEnabled2 = this.scrollview.enableSlide();
+                    expect(slideEnabled2).toBe(false);
+
+                    this.surface._eventOutput.emit('mousewheel', unitHelper.mockEvent({
+                        count: 1
+                    }));
+                    expect(this.scrollview._touchCount).toBe(1);
+                });
+            });
+
+            it('setLoop() should succeed', function() {
+
+                var scrollview = new this.Scrollview();
+                var Engine = this.$famous['famous/core/Engine'];
+                var Surface = this.$famous['famous/core/Surface'];
+
+                var surface = new Surface({
+                    content: 'toto',
+                    size: [100, 100]
+                });
+
+                scrollview.sequenceFrom([surface]);
+                Engine.createContext().add(scrollview);
+                expect(scrollview._node._.loop).toBe(false);
+                expect(scrollview._node.getNext()).toBeNull();
+                scrollview.setLoop(true);
+                expect(scrollview._node._.loop).toBe(true);
+                expect(scrollview._node.getNext()).toBeTruthy();
+                scrollview.setLoop(false);
+                expect(scrollview._node._.loop).toBe(false);
+                expect(scrollview._node.getNext()).toBeNull();
+            });
         });
     });
 });

@@ -2,7 +2,7 @@
     <fa-sequential-layout fa-options="{direction: 0}">
         <fa-modifier ng-repeat="slide in yooPagerCtrl.slidesRange track by $index" fa-size="[30,20]" fa-opacity="yooPagerCtrl.markerOpacity(yooSlideBoxCtrl.getPageDistance($index))">
             <fa-modifier fa-align="[0.5,0.5]" fa-origin="[0.5,0.5]" fa-scale="yooPagerCtrl.markerScale(yooSlideBoxCtrl.getPageDistance($index))">
-                <fa-surface class="text-center yoo-pager-cursor" ng-click="yooPagerCtrl.goToPage($index)" fa-z-index="yooPagerCtrl.slidesRange.length+2">
+                <fa-surface class="text-center yoo-pager-cursor" ng-click="yooPagerCtrl.pagerClick($index)" fa-z-index="yooPagerCtrl.slidesRange.length+2">
                     <i class="icon ion-record" ng-class="yooSlideBoxCtrl.pagerColor"></i>
                 </fa-surface>
             </fa-modifier>

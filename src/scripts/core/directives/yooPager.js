@@ -10,8 +10,9 @@ module.exports = function(app) {
         var yooPagerCtrl = this;
         yooPagerCtrl.directivename = directivename;
         yooPagerCtrl.slidesRange = [];
-        yooPagerCtrl.goToPage = function(index) {
+        yooPagerCtrl.pagerClick = function(index) {
             $scope.yooSlideBoxCtrl.goToPage(index);
+            $scope.yooSlideBoxCtrl.pagerClick(index);
         };
     };
     controller.$inject = controllerDeps;

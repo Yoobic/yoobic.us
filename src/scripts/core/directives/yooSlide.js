@@ -51,6 +51,7 @@ module.exports = function(app) {
                         var yooSlideBoxCtrl = ctrls[1];
                         var yooSlideCtrl = ctrls[0];
                         scope.yooSlideBoxCtrl = yooSlideBoxCtrl;
+                        // yooSlideCtrl.pageIndex = scope.index;
                         yooSlideCtrl.pageIndex = yooSlideBoxCtrl.pages++;
                         yooSlideCtrl.getPageDistance = function() {
                             return yooSlideBoxCtrl.getPageDistance(yooSlideCtrl.pageIndex);
