@@ -265,6 +265,9 @@ module.exports = function(app) {
                         directiveBinder.toPrimitive(scope, attrs, yooSlideBoxCtrl, 'slideInterval', 4000, 'number');
 
                         yooSlideBoxCtrl.slideDirection = cleanSlideDirection(yooSlideBoxCtrl.slideDirection);
+                        attrs.$observe('slideDirection', function(slideDirection) {
+                            yooSlideBoxCtrl.slideDirection = cleanSlideDirection(slideDirection);
+                        });
 
                         var deregisterInstance = slideBoxDelegate._registerInstance(
                             yooSlideBoxCtrl, attrs.delegateHandle
@@ -293,7 +296,7 @@ module.exports = function(app) {
                             }
                         });
 
-                        scopeHelper.$watchPostDigest('yooSlideBoxCtrl.doesContinue', function(doesContinue) {
+                        scopeHelper.$watchPostDigest(scope, 'yooSlideBoxCtrl.doesContinue', function(doesContinue) {
                             yooSlideBoxCtrl.setLoop(doesContinue);
                         });
                         // var __postDigestQueued = false;
