@@ -45,9 +45,19 @@ module.exports = function(app) {
             Scrollview.prototype.getPageDistance = function(index) {
                 var retVal = index;
 
+                var normLength = this._node._.array.length;
                 var length = this.getContainerLength();
                 try {
-                    retVal = index - this.getAbsolutePosition() / length;
+
+                    var normPosition = this.getAbsolutePosition() / length;
+
+                    if(normPosition < 0) {
+                        normPosition += normLength;
+                    }
+
+                    var normDistances = [index - normPosition, -(index - (normPosition - normLength))];
+
+                    retVal = Math.abs(normDistances[0]) <= Math.abs(normDistances[1]) ? normDistances[0] : normDistances[1];
                 } catch(err) {}
 
                 return retVal;
@@ -89,9 +99,6 @@ module.exports = function(app) {
                 if(this._node) {
                     this._node.render();
                     this._node._.loop = shouldLoop;
-                //     this.getCurrentIndex();
-                //     console.log('firstIndex ',this._node._.firstIndex );
-                //     this._node._.reindex(0, 0, this._node._.array.length);
                 }
             };
         };

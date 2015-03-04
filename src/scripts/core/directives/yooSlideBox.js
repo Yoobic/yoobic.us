@@ -227,8 +227,8 @@ module.exports = function(app) {
     controller.$inject = controllerDeps;
 
     /*eslint-disable consistent-this */
-    var directiveDeps = ['$famous', app.name + '.slideBoxDelegate'];
-    var directive = function($famous, slideBoxDelegate) {
+    var directiveDeps = ['$famous', 'yoobic.angular.core.directiveBinder', 'yoobic.angular.core.scopeHelper', app.name + '.slideBoxDelegate'];
+    var directive = function($famous, directiveBinder, scopeHelper, slideBoxDelegate) {
         return {
             require: ['yooSlideBox'],
             restrict: 'AE',
@@ -238,11 +238,10 @@ module.exports = function(app) {
                 activeSlide: '=?',
                 onSlideChanged: '&',
                 showPager: '=',
-                autoPlay: '=?',
-                // TODO: use directiveBinder.toPrimitive() and '@' one-way bindings
-                doesContinue: '=?',
-                slideDirection: '=?',
-                slideInterval: '=?'
+                autoPlay: '@',
+                doesContinue: '@',
+                slideDirection: '@',
+                slideInterval: '@'
             },
             controller: controller,
             controllerAs: 'yooSlideBoxCtrl',
@@ -261,11 +260,14 @@ module.exports = function(app) {
                         var yooSlideBoxCtrl = ctrls[0];
                         yooSlideBoxCtrl.pages = 0;
 
-                        yooSlideBoxCtrl.autoPlay = yooSlideBoxCtrl.autoPlay || yooSlideBoxCtrl.doesContinue;
-
-                        yooSlideBoxCtrl.slideInterval = yooSlideBoxCtrl.slideInterval || 4000;
+                        directiveBinder.toPrimitive(scope, attrs, yooSlideBoxCtrl, 'doesContinue', false, 'boolean');
+                        directiveBinder.toPrimitive(scope, attrs, yooSlideBoxCtrl, 'autoPlay', yooSlideBoxCtrl.doesContinue, 'boolean');
+                        directiveBinder.toPrimitive(scope, attrs, yooSlideBoxCtrl, 'slideInterval', 4000, 'number');
 
                         yooSlideBoxCtrl.slideDirection = cleanSlideDirection(yooSlideBoxCtrl.slideDirection);
+                        attrs.$observe('slideDirection', function(slideDirection) {
+                            yooSlideBoxCtrl.slideDirection = cleanSlideDirection(slideDirection);
+                        });
 
                         var deregisterInstance = slideBoxDelegate._registerInstance(
                             yooSlideBoxCtrl, attrs.delegateHandle
@@ -294,18 +296,20 @@ module.exports = function(app) {
                             }
                         });
 
-                        // TODO: use $watchPostDigest
-                        var __postDigestQueued = false;
-                        scope.$watch('yooSlideBoxCtrl.doesContinue', function(doesContinue, oldDoesContinue) {
-                            if(__postDigestQueued) {
-                                return;
-                            }
-                            __postDigestQueued = true;
-                            scope.$$postDigest(function() {
-                                __postDigestQueued = false;
-                                yooSlideBoxCtrl.setLoop(yooSlideBoxCtrl.doesContinue);
-                            });
+                        scopeHelper.$watchPostDigest(scope, 'yooSlideBoxCtrl.doesContinue', function(doesContinue) {
+                            yooSlideBoxCtrl.setLoop(doesContinue);
                         });
+                        // var __postDigestQueued = false;
+                        // scope.$watch('yooSlideBoxCtrl.doesContinue', function(doesContinue, oldDoesContinue) {
+                        //     if(__postDigestQueued) {
+                        //         return;
+                        //     }
+                        //     __postDigestQueued = true;
+                        //     scope.$$postDigest(function() {
+                        //         __postDigestQueued = false;
+                        //         yooSlideBoxCtrl.setLoop(yooSlideBoxCtrl.doesContinue);
+                        //     });
+                        // });
 
                         scope.$watch(function() {
                             return yooSlideBoxCtrl.getContainerLength();

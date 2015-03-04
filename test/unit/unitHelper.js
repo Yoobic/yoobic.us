@@ -10,10 +10,14 @@ var camelToDash = exports.camelToDash = function(str) {
         .replace(/([a-z\d])([A-Z])/g, '$1-$2');
 };
 
-exports.compileDirective = function(directivename, html) {
+exports.compileDirective = function(directivename, html, runDigest) {
+    runDigest = runDigest === undefined ? true : runDigest;
+
     var element = jQLite(html);
     this.$compile(element)(this.$scope);
-    this.$scope.$digest();
+    if(runDigest) {
+        this.$scope.$digest();
+    }
     this.directive = element.find(camelToDash(directivename));
     if(this.directive.length === 0) {
         this.directive = element;

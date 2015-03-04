@@ -186,7 +186,7 @@ describe(app.name, function() {
                 var vm = this.$scope.vm;
                 vm.doesContinue = false;
                 unitHelper.compileDirective.call(this, directivename,
-                    '<yoo-slide-box does-continue="vm.doesContinue">' +
+                    '<yoo-slide-box does-continue="{{vm.doesContinue}}">' +
                     '   <yoo-slide>' +
                     '      <div class="test"></div>' +
                     '   </yoo-slide>' +
@@ -209,7 +209,7 @@ describe(app.name, function() {
                 var vm = this.$scope.vm;
                 vm.doesContinue = false;
                 unitHelper.compileDirective.call(this, directivename,
-                    '<yoo-slide-box does-continue="vm.doesContinue">' +
+                    '<yoo-slide-box does-continue="{{vm.doesContinue}}">' +
                     '   <yoo-slide>' +
                     '   </yoo-slide>' +
                     '   <yoo-slide>' +
@@ -226,7 +226,7 @@ describe(app.name, function() {
                 var vm = this.$scope.vm;
                 vm.autoPlay = true;
                 unitHelper.compileDirective.call(this, directivename,
-                    '<yoo-slide-box auto-play="vm.autoPlay">' +
+                    '<yoo-slide-box auto-play="{{vm.autoPlay}}">' +
                     '   <yoo-slide>' +
                     '      <div class="test"></div>' +
                     '   </yoo-slide>' +
@@ -245,7 +245,7 @@ describe(app.name, function() {
                 var vm = this.$scope.vm;
                 vm.slideInterval = 300;
                 unitHelper.compileDirective.call(this, directivename,
-                    '<yoo-slide-box slide-interval="vm.slideInterval">' +
+                    '<yoo-slide-box slide-interval="{{vm.slideInterval}}">' +
                     '   <yoo-slide>' +
                     '      <div class="test"></div>' +
                     '   </yoo-slide>' +
@@ -265,7 +265,7 @@ describe(app.name, function() {
                 var vm = this.$scope.vm;
                 vm.slideDirection = 'invalid slideDirection!!';
                 unitHelper.compileDirective.call(this, directivename,
-                    '<yoo-slide-box slide-direction="vm.slideDirection">' +
+                    '<yoo-slide-box slide-direction="{{vm.slideDirection}}">' +
                     '   <yoo-slide>' +
                     '      <div class="test"></div>' +
                     '   </yoo-slide>' +
@@ -289,7 +289,7 @@ describe(app.name, function() {
                     var vm = this.$scope.vm;
                     vm.autoPlay = true;
                     unitHelper.compileDirective.call(this, directivename,
-                        '<yoo-slide-box auto-play="vm.autoPlay">' +
+                        '<yoo-slide-box auto-play="{{vm.autoPlay}}">' +
                         '   <yoo-slide></yoo-slide>' +
                         '   <yoo-slide></yoo-slide>' +
                         '   <yoo-slide></yoo-slide>' +
@@ -306,7 +306,7 @@ describe(app.name, function() {
                     var vm = this.$scope.vm;
                     vm.autoPlay = true;
                     unitHelper.compileDirective.call(this, directivename,
-                        '<yoo-slide-box auto-play="vm.autoPlay">' +
+                        '<yoo-slide-box auto-play="{{vm.autoPlay}}">' +
                         '   <yoo-slide></yoo-slide>' +
                         '   <yoo-slide></yoo-slide>' +
                         '   <yoo-slide></yoo-slide>' +
@@ -328,7 +328,7 @@ describe(app.name, function() {
                     var vm = this.$scope.vm;
                     vm.doesContinue = true;
                     unitHelper.compileDirective.call(this, directivename,
-                        '<yoo-slide-box does-continue="vm.doesContinue" auto-play="vm.autoPlay">' +
+                        '<yoo-slide-box does-continue="{{vm.doesContinue}}">' +
                         '   <yoo-slide></yoo-slide>' +
                         '   <yoo-slide></yoo-slide>' +
                         '   <yoo-slide></yoo-slide>' +
@@ -346,7 +346,7 @@ describe(app.name, function() {
                     var vm = this.$scope.vm;
                     vm.doesContinue = false;
                     unitHelper.compileDirective.call(this, directivename,
-                        '<yoo-slide-box does-continue="vm.doesContinue" auto-play="vm.autoPlay">' +
+                        '<yoo-slide-box does-continue="{{vm.doesContinue}}">' +
                         '   <yoo-slide></yoo-slide>' +
                         '   <yoo-slide></yoo-slide>' +
                         '   <yoo-slide></yoo-slide>' +
@@ -365,7 +365,7 @@ describe(app.name, function() {
                     vm.autoPlay = true;
                     vm.slideInterval = 300;
                     unitHelper.compileDirective.call(this, directivename,
-                        '<yoo-slide-box auto-play="vm.autoPlay" slide-interval="vm.slideInterval">' +
+                        '<yoo-slide-box auto-play="{{vm.autoPlay}}" slide-interval="{{vm.slideInterval}}">' +
                         '   <yoo-slide></yoo-slide>' +
                         '   <yoo-slide></yoo-slide>' +
                         '   <yoo-slide></yoo-slide>' +
@@ -391,7 +391,7 @@ describe(app.name, function() {
                     vm.autoPlay = true;
                     vm.slideDirection = 'goToPreviousPage';
                     unitHelper.compileDirective.call(this, directivename,
-                        '<yoo-slide-box auto-play="vm.autoPlay" slide-direction="vm.slideDirection">' +
+                        '<yoo-slide-box auto-play="{{vm.autoPlay}}" slide-direction="{{vm.slideDirection}}">' +
                         '   <yoo-slide></yoo-slide>' +
                         '   <yoo-slide></yoo-slide>' +
                         '   <yoo-slide></yoo-slide>' +
@@ -421,7 +421,7 @@ describe(app.name, function() {
                 var vm = this.$scope.vm;
                 vm.activeSlide = 0;
                 unitHelper.compileDirective.call(this, directivename,
-                    '<yoo-slide-box auto-play="vm.autoPlay" active-slide="vm.activeSlide">' +
+                    '<yoo-slide-box active-slide="vm.activeSlide">' +
                     '   <yoo-slide></yoo-slide>' +
                     '   <yoo-slide></yoo-slide>' +
                     '   <yoo-slide></yoo-slide>' +
@@ -644,7 +644,7 @@ describe(app.name, function() {
                     var vm = this.$scope.vm;
                     vm.autoPlay = true;
                     unitHelper.compileDirective.call(this, directivename,
-                        '<yoo-slide-box auto-play="vm.autoPlay">' +
+                        '<yoo-slide-box auto-play="{{vm.autoPlay}}">' +
                         '   <yoo-slide></yoo-slide>' +
                         '   <yoo-slide></yoo-slide>' +
                         '   <yoo-slide></yoo-slide>' +
