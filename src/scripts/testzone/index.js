@@ -29,6 +29,12 @@ module.exports = function(namespace) {
                 controller: fullname + '.slidebox',
                 controllerAs: 'vm'
             });
+            $stateProvider.state('sidemenu', {
+                url: '/sidemenu',
+                template: require('./views/sidemenu.html'),
+                controller: fullname + '.sidemenu',
+                controllerAs: 'vm'
+            });
         }
     ]);
 

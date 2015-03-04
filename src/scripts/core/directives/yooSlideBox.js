@@ -227,8 +227,10 @@ module.exports = function(app) {
     controller.$inject = controllerDeps;
 
     /*eslint-disable consistent-this */
+
     var directiveDeps = ['$famous', 'yoobic.angular.core.directiveBinder', 'yoobic.angular.core.scopeHelper', app.name + '.slideBoxDelegate'];
     var directive = function($famous, directiveBinder, scopeHelper, slideBoxDelegate) {
+
         return {
             require: ['yooSlideBox'],
             restrict: 'AE',
@@ -271,6 +273,7 @@ module.exports = function(app) {
 
                         var deregisterInstance = slideBoxDelegate._registerInstance(
                             yooSlideBoxCtrl, attrs.delegateHandle
+
                         );
 
                         scope.$on('$destroy', function() {
