@@ -20,6 +20,7 @@ describe(app.name, function() {
                 this.$famousHelper = $injector.get(app.name + '.' + 'famousHelper');
                 this.$compile = $injector.get('$compile');
                 this.$scope = $injector.get('$rootScope').$new();
+                this.$scope.vm = {};
             }));
 
             it('should require yooSlideBox', function() {
@@ -28,9 +29,13 @@ describe(app.name, function() {
                 }.bind(this)).toThrowError();
             });
 
-            it('should call yooSlideBoxCtrl.goToPage on mouse click', function() {
+            it('should call yooSlideBoxCtrl.goToPage and yooSlideBox.pagerClick on mouse click', function() {
+                var vm = this.$scope.vm;
+                vm.click = function() {
+
+                };
                 var element = unitHelper.compileDirectiveFamous.call(this, directivename,
-                    '<yoo-slide-box show-pager="true">' +
+                    '<yoo-slide-box show-pager="true" pager-click="vm.click()">' +
                     '   <yoo-slide>' +
                     '      <div class="test"></div>' +
                     '   </yoo-slide>' +
@@ -41,6 +46,9 @@ describe(app.name, function() {
 
                 var index = 1;
                 spyOn(this.scope.yooSlideBoxCtrl, 'goToPage');
+                spyOn(this.scope.yooSlideBoxCtrl, 'pagerClick').and.callThrough();
+                spyOn(vm, 'click');
+
                 var surfaceElement = element.find('yoo-pager')[0].querySelectorAll('fa-surface.yoo-pager-cursor')[index];
 
                 var surface = this.$famousHelper.getFamousElement(surfaceElement);
@@ -48,6 +56,8 @@ describe(app.name, function() {
 
                 this.$scope.$digest();
                 expect(this.scope.yooSlideBoxCtrl.goToPage).toHaveBeenCalledWith(index);
+                expect(this.scope.yooSlideBoxCtrl.pagerClick).toHaveBeenCalledWith(index);
+                expect(vm.click).toHaveBeenCalled();
             });
         });
     });

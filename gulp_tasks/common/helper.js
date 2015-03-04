@@ -31,7 +31,11 @@ var execHandler = exports.execHandler = function(err, stdout, stderr) {
         gutil.log(stdout);
     }
     if(stderr) {
-        gutil.log(chalk.red('Error: ') + stderr);
+        if(err !== null) {
+            gutil.log(chalk.red('Error: ') + stderr);
+        } else {
+            gutil.log(chalk.yellow('Warning: ') + stderr);
+        }
     }
 };
 

@@ -1,5 +1,6 @@
 'use strict';
 var servicename = 'famousOverrides';
+var _ = require('lodash');
 
 module.exports = function(app) {
 
@@ -44,9 +45,19 @@ module.exports = function(app) {
             Scrollview.prototype.getPageDistance = function(index) {
                 var retVal = index;
 
+                var normLength = this._node._.array.length;
                 var length = this.getContainerLength();
                 try {
-                    retVal = index - this.getAbsolutePosition() / length;
+
+                    var normPosition = this.getAbsolutePosition() / length;
+
+                    if(normPosition < 0) {
+                        normPosition += normLength;
+                    }
+
+                    var normDistances = [index - normPosition, -(index - (normPosition - normLength))];
+
+                    retVal = Math.abs(normDistances[0]) <= Math.abs(normDistances[1]) ? normDistances[0] : normDistances[1];
                 } catch(err) {}
 
                 return retVal;
@@ -61,6 +72,34 @@ module.exports = function(app) {
 
             Scrollview.prototype.setMouseSync = function() {
                 this.sync.addSync(['mouse']);
+            };
+
+            Scrollview.prototype.disableSyncs = function() {
+                _(this.sync._syncs).forEach(function(evt, evtName) {
+                    this.sync.unpipeSync(evtName);
+                }.bind(this));
+            };
+
+            Scrollview.prototype.enableSyncs = function() {
+                _(this.sync._syncs).forEach(function(evt, evtName) {
+                    this.sync.pipeSync(evtName);
+                }.bind(this));
+            };
+
+            Scrollview.prototype.enableSlide = function(shouldEnable) {
+                if(shouldEnable) {
+                    this.enableSyncs();
+                } else if(!shouldEnable && shouldEnable !== undefined) {
+                    this.disableSyncs();
+                }
+                return !!this.sync._eventOutput.upstream.length;
+            };
+
+            Scrollview.prototype.setLoop = function(shouldLoop) {
+                if(this._node) {
+                    this._node.render();
+                    this._node._.loop = shouldLoop;
+                }
             };
         };
 

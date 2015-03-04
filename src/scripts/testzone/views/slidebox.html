@@ -1,11 +1,12 @@
 <fa-view>
-    <fa-header-footer-layout fa-options="{headerSize:0, footerSize: 120}">
+    <fa-header-footer-layout fa-options="{headerSize:0, footerSize: 180}">
         <fa-modifier>
             <fa-surface fa-background-color="'white'">
 
             </fa-surface>
         </fa-modifier>
-        <yoo-slide-box on-slide-changed="slideHasChanged($index)" show-pager="true" animation-type="{{vm.animation}}" delegate-handle="myslidebox">
+        <yoo-slide-box on-slide-changed="slideHasChanged($index)" show-pager="true" animation-type="{{vm.animation}}" does-continue="{{vm.doesContinue}}" auto-play="{{vm.autoPlay}}" slide-direction="{{vm.slideDirection}}" slide-interval="{{vm.slideInterval}}" delegate-handle="myslidebox" active-slide="vm.activeSlide">
+            <!-- <yoo-slide-box on-slide-changed="slideHasChanged($index)" show-pager="true" animation-type="{{vm.animation}}" does-continue="{{vm.doesContinue}}" delegate-handle="myslidebox"> -->
             <yoo-slide>
                 <div class="box blue">
                     <h1>BLUE</h1>
@@ -38,16 +39,46 @@
             </yoo-slide>
         </yoo-slide-box>
 
-        <fa-modifier fa-size="[undefined,100]">
-            <fa-modifier fa-origin="[0.5,0.75]" fa-align="[0.5,0.75]" fa-size="[200,56]">
+        <fa-modifier fa-size="[undefined,150]">
+        <fa-header-footer-layout>
+            <fa-modifier fa-origin="[0.5,0.5]" fa-align="[0.5,0.5]" fa-size="[400,56]">
                 <fa-surface>
-                    <button class="button button-assertive" ng-click="vm.goToPage(3)">Click</button>
+                    <button class="button button-stable" ng-click="vm.goToPage(3)">Click</button>
+                    <button class="button" ng-class="vm.doesContinue ? 'button-balanced' : 'button-assertive'" ng-click="vm.toggleLoop()"><code><b>does-continue</b></code></button>
+                    <button class="button" ng-class="vm.autoPlay ? 'button-balanced' : 'button-assertive'" ng-click="vm.toggleAutoPlay()"><code><b>auto-play</b></code></button>
+                </fa-surface>
+            </fa-modifier>
+            <fa-modifier fa-origin="[0.5,0.67]" fa-align="[0.5,0.67]" fa-size="[575,52]">
+                <fa-surface>
+                    <li class="item item-toggle" ng-click="vm.toggleSlide(vm.shouldEnableSlide)">
+                        Manual Sliding <em>(currently: <strong>{{vm.shouldEnableSlide}}</strong>)</em>
+                        <label class="toggle toggle-balanced-assertive">
+                            <input type="checkbox" ng-model="vm.shouldEnableSlide">
+                            <div class="track">
+                                <div class="handle"></div>
+                            </div>
+                        </label>
+                    </li>
+                </fa-surface>
+            </fa-modifier>
+            <fa-modifier fa-origin="[0.5,1]" fa-align="[0.5,1]" fa-size="[400,20]">
+                <fa-surface>
                     <select ng-model="vm.animation" ng-options="animation for animation in vm.animations">
+
+                    </select>
+                    <select ng-model="vm.slideDirection" ng-options="direction for direction in vm.slideDirections">
+
+                    </select>
+                    <select ng-model="vm.slideInterval" ng-options="interval for interval in vm.slideIntervals">
+
+                    </select>
+                    <select ng-model="vm.activeSlide" ng-options="activeSlide for activeSlide in vm.activeSlides">
 
                     </select>
 
                 </fa-surface>
             </fa-modifier>
+        </fa-header-footer-layout>
         </fa-modifier>
     </fa-header-footer-layout>
 </fa-view>

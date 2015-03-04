@@ -29,3 +29,20 @@
 .green {
     background-color: green;
 }
+
+@mixin toggle-style-mixed($on-border-color, $on-bg-color, $off-border-color, $off-bg-color){
+  // the track when the toggle is "on"
+  & input:checked + .track {
+    border-color: $on-border-color;
+    background-color: $on-bg-color;
+  }
+  & input:not(:checked) + .track {
+    border-color: $off-border-color;
+    background-color: $off-bg-color;
+  }
+}
+.toggle {
+&.toggle-balanced-assertive  {
+    @include toggle-style-mixed($toggle-on-balanced-border, $toggle-on-balanced-bg, $toggle-on-assertive-border, $toggle-on-assertive-bg);
+  }
+}

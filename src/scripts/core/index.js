@@ -6,7 +6,7 @@ var angular = require('angular');
 require('famous-angular');
 var yoobicCore = require('yoobic-angular-core')();
 var app = angular.module(fullname, ['famous.angular', yoobicCore.name]);
-app.namespace = {} || app.namespace;
+app.namespace = app.namespace || {};
 app.namespace.yoobicCore = yoobicCore.name;
 
 // inject:folders start

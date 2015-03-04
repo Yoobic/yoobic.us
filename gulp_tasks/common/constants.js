@@ -91,6 +91,9 @@ module.exports = function() {
         },
         dist: {
             distFolder: './dist'
+        },
+        docs: {
+            docsFolder: 'docs'
         }
     };
 
