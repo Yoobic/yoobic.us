@@ -12,7 +12,7 @@ module.exports = function(app) {
         vm.doesContinue = true;
         vm.shouldEnableSlide = true;
         vm.autoPlay = true;
-        // vm.slideInterval = 2000;
+        vm.slideInterval = 2000;
         vm.goToPage = function(index) {
             slideBoxDelegate.$getByHandle('myslidebox').goToPage(index);
         };
