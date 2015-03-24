@@ -42,7 +42,7 @@ describe(app.name, function() {
                     '</yoo-slide>' +
                     '</yoo-slide-box>'
                 );
-                this.$scope.$apply();
+                // this.$scope.$apply();
 
                 var scrollview = this.$famous.find('fa-scroll-view')[0].renderNode;
                 var surface = this.$famous.find('fa-surface')[0].renderNode;
@@ -99,7 +99,7 @@ describe(app.name, function() {
                     '<yoo-slide ng-repeat="view in views">' +
                     '<div>surface{{view}}</div>' +
                     '</yoo-slide>' +
-                    '</yoo-slide-box>', 300, this.$scope
+                    '</yoo-slide-box>', 300
                 );
 
                 this.$scope.views = [0, 1];
