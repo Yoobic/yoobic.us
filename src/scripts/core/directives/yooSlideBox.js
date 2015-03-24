@@ -271,10 +271,8 @@ module.exports = function(app) {
                             yooSlideBoxCtrl.slideDirection = cleanSlideDirection(slideDirection);
                         });
 
-                        var deregisterInstance = slideBoxDelegate._registerInstance(
-                            yooSlideBoxCtrl, attrs.delegateHandle
-
-                        );
+                        var deleteHandle = attrs.delegateHandle || attrs.id;
+                        var deregisterInstance = slideBoxDelegate._registerInstance(yooSlideBoxCtrl, delegateHandle);
 
                         scope.$on('$destroy', function() {
                             yooSlideBoxCtrl.stopInner();
