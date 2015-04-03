@@ -26,6 +26,19 @@ module.exports = function(app) {
             }
         };
 
+        yooSideMenuContentCtrl.getEdgeDragThreshold = function() {
+            if(typeof yooSideMenuContentCtrl.edgeDragThreshold === 'number') {
+                return yooSideMenuContentCtrl.edgeDragThreshold;
+            } else if(yooSideMenuContentCtrl.edgeDragThreshold === true) {
+                if(yooSideMenuContentCtrl.getSurface() && yooSideMenuContentCtrl.getSurface().renderNode.getSize()) {
+                    var edgeWidth = yooSideMenuContentCtrl.getSurface().renderNode.getSize()[0] * 0.05;
+                    return 25 > edgeWidth ? 25 : edgeWidth;
+                }
+                return 25;
+            }
+            return 0;
+        };
+
     };
     controller.$inject = controllerDeps;
 
@@ -43,18 +56,6 @@ module.exports = function(app) {
             bindToController: true,
             priority: 100,
             compile: function(tElement, tAttrs) {
-                function cleanEdgeDragThreshold(edgeDragThreshold) {
-                    switch(typeof edgeDragThreshold) {
-                        case 'object':
-                            return 0;
-                        case 'number':
-                            return edgeDragThreshold;
-                        case 'boolean':
-                        default:
-                            return edgeDragThreshold ? 25 : 0;
-                    }
-                }
-
                 famousHelper.manualTransclude(require('./yooSideMenuContent.html'), tElement, 'fa-surface', '<fa-surface></fa-surface>');
                 var surfaces = tElement.find('fa-surface');
 
@@ -73,16 +74,13 @@ module.exports = function(app) {
 
                         // var EventHandler = $famous['famous/core/EventHandler'];
 
-
                         directiveBinder.toPrimitive(scope, attrs, yooSideMenuContentCtrl, 'dragContent', true, 'boolean');
                         directiveBinder.toPrimitive(scope, attrs, yooSideMenuContentCtrl, 'edgeDragThreshold', false);
 
-                        yooSideMenuContentCtrl.edgeDragThreshold = cleanEdgeDragThreshold(yooSideMenuContentCtrl.edgeDragThreshold);
-
-                        attrs.$observe('edgeDragThreshold', function(edgeDragThreshold) {
-                            edgeDragThreshold = scope.$eval(edgeDragThreshold);
-                            yooSideMenuContentCtrl.edgeDragThreshold = cleanEdgeDragThreshold(edgeDragThreshold);
-                        });
+                        // attrs.$observe('edgeDragThreshold', function(edgeDragThreshold) {
+                        //     edgeDragThreshold = scope.$eval(edgeDragThreshold);
+                        //     yooSideMenuContentCtrl.edgeDragThreshold = cleanEdgeDragThreshold(edgeDragThreshold);
+                        // });
 
                     },
                     post: function(scope, element, attrs, ctrls) {
@@ -100,13 +98,6 @@ module.exports = function(app) {
                         //     });
                         // });
 
-                        // scope.$watch('yooSideMenuContentCtrl.edgeDragThreshold', function(newVal) {
-                        //     if(newVal) {
-
-                        //     } else if(newValnewVal === 0) {
-
-                        //     }
-                        // });
                     }
                 };
             }

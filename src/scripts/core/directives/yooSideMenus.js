@@ -16,8 +16,8 @@ module.exports = function(app) {
     /*eslint-disable consistent-this */
 
     // directive
-    var directiveDeps = ['$famous', '$timeline', app.name + '.sideMenuDelegate'];
-    var directive = function($famous, $timeline, sideMenuDelegate) {
+    var directiveDeps = ['$famous', '$timeline', '$window', app.name + '.sideMenuDelegate'];
+    var directive = function($famous, $timeline, $window, sideMenuDelegate) {
         return {
             restrict: 'E',
             scope: {
@@ -60,117 +60,113 @@ module.exports = function(app) {
                         yooSideMenusCtrl.eventHandler = new EventHandler();
                         yooSideMenusCtrl.eventHandler.pipe(sync);
 
-                        scope.$watchGroup([
-                            'yooSideMenusCtrl.left.getEnabled()',
-                            'yooSideMenusCtrl.left.getWidth()',
-                            'yooSideMenusCtrl.right.getEnabled()',
-                            'yooSideMenusCtrl.right.getWidth()',
-                            'yooSideMenusCtrl.content.getWidth()'
-                        ], function(vals) {
-                            var leftEnabled = 0;
-                            var leftWidth = 1;
-                            var rightEnabled = 2;
-                            var rightWidth = 3;
-                            var contentWidth = 4;
+                        var edgeDragThreshold = [0, 0];
 
-                            if(vals[contentWidth]) {
-                                var contentTranslate = [];
+                        // scope.$watchGroup([
+                        //     'yooSideMenusCtrl.left.getEnabled()',
+                        //     'yooSideMenusCtrl.left.getWidth()',
+                        //     'yooSideMenusCtrl.right.getEnabled()',
+                        //     'yooSideMenusCtrl.right.getWidth()',
+                        //     'yooSideMenusCtrl.content.getWidth()',
+                        //     'yooSideMenusCtrl.content.getEdgeDragThreshold()',
+                        //     'yooSideMenusCtrl.content.getSurface().renderNode.content.clientWidth'
+                        // ], function(vals) {
+                        //     var leftEnabled = vals[0];
+                        //     var leftWidth = vals[1];
+                        //     var rightEnabled = vals[2];
+                        //     var rightWidth = vals[3];
+                        //     var contentWidth = vals[4];
+                        //     var threshold = vals[5];
 
-                                if(vals[leftEnabled]) {
-                                    contentTranslate.push([0, [vals[leftWidth] - 0 || 0, 0]]);
+                        var setupTranslateFns = function() {
+                            var leftEnabled = yooSideMenusCtrl.left.getEnabled();
+                            var leftWidth = yooSideMenusCtrl.left.getWidth();
+                            var rightEnabled = yooSideMenusCtrl.right.getEnabled();
+                            var rightWidth = yooSideMenusCtrl.right.getWidth();
+                            var contentWidth = yooSideMenusCtrl.content.getWidth();
+                            var threshold = yooSideMenusCtrl.content.getEdgeDragThreshold();
+
+                            if(contentWidth) { // only do stuff if we have gotten back the actual content width
+                                var contentTranslate = [[1, [0, 0]]];
+
+                                if(leftEnabled) { // if leftEnabled add 0 state to left side of translate array 
+                                    contentTranslate.unshift([0, [leftWidth - 0 || 0, 0]]);
                                     yooSideMenusCtrl.left.translate = $timeline([
                                         [0, [0, 0]],
-                                        [1, [-vals[leftWidth], 0]],
-                                        [2, [-vals[leftWidth] * 2, 0]]
+                                        [1, [-leftWidth, 0]],
+                                        [2, [-leftWidth * 2, 0]]
                                     ]);
-                                    yooSideMenusCtrl.left.getSurface().show();
+                                    yooSideMenusCtrl.left.getSurface().show(); // leftEnabled is true so show left menu
+                                    if(threshold && threshold !== 0) { // also make sure to update the left drag threshhold
+                                        edgeDragThreshold[0] = threshold;
+                                    }
                                 }
-
-                                contentTranslate.push([1, [0, 0]]);
-
-                                if(vals[rightEnabled]) {
-                                    contentTranslate.push([2, [-vals[rightWidth] - 0 || 0, 0]]);
+                                if(rightEnabled) { // if rightEnabled add 2 state to right side of translate array
+                                    contentTranslate.push([2, [-rightWidth - 0 || 0, 0]]);
                                     yooSideMenusCtrl.right.translate = $timeline([
-                                        [0, [vals[contentWidth] + vals[rightWidth], 0]],
-                                        [1, [vals[contentWidth], 0]],
-                                        [2, [vals[contentWidth] - vals[rightWidth], 0]]
+                                        [0, [contentWidth + rightWidth, 0]],
+                                        [1, [contentWidth, 0]],
+                                        [2, [contentWidth - rightWidth, 0]]
                                     ]);
-                                    yooSideMenusCtrl.right.getSurface().show();
+                                    yooSideMenusCtrl.right.getSurface().show(); // rightEnabled is true so show right menu
+                                    if(threshold && threshold !== 0) { // also make sure to update the right drag threshhold
+                                        edgeDragThreshold[1] = contentWidth - threshold;
+                                    }
                                 }
-
                                 yooSideMenusCtrl.content.translate = $timeline(contentTranslate);
                             }
-                        });
+                        }
+
+                        scope.$watch(function() {
+                            return {
+                                contentSize: yooSideMenusCtrl.content.getSurface().renderNode.content.clientWidth,
+                                leftEnabled: yooSideMenusCtrl.left.getEnabled(),
+                                leftWidth: yooSideMenusCtrl.left.getWidth(),
+                                rightEnabled: yooSideMenusCtrl.right.getEnabled(),
+                                rightWidth: yooSideMenusCtrl.right.getWidth(),
+                                contentWidth: yooSideMenusCtrl.content.getWidth(),
+                                threshold: yooSideMenusCtrl.content.getEdgeDragThreshold()
+                            };
+                        }, setupTranslateFns, true);
+
+                        angular.element($window).on('resize', setupTranslateFns);
 
                         var start;
-                        var startInBounds = function(start, data, threshold) {
-                            if(!yooSideMenusCtrl.content.edgeDragThreshold) {
+                        var startX;
+                        var updateAllowed;
+                        var startInBounds = function() {
+                            var threshold = yooSideMenusCtrl.content.getEdgeDragThreshold();
+                            if(!threshold || start <= 0.5 || start >= 1.5) {
                                 return true;
-                            } else {
-                                var lBound = threshold +
-                                    start === 0 ? yooSideMenusCtrl.left.getWidth() :
-                                    start === 2 ? -threshold : 0;
-                                var rBound = yooSideMenusCtrl.content.getWidth() + threshold +
-                                    start === 0 ? yooSideMenusCtrl.left.getWidth() :
-                                    start === 2 ? -threshold : 0;
+                            } else if(typeof startX === 'number') {
+                                return startX <= edgeDragThreshold[0] || startX >= edgeDragThreshold[1];
                             }
+                            return true;
                         };
 
-                        var _cancelUpdate;
-                        var _cancelStart = function(data) {
-                            if(!yooSideMenusCtrl.content.edgeDragThreshold) {
-                                return false;
-                            } else {
-                                transitionable.
-                                _cancelUpdate = true &&
-                                data.clientX >= yooSideMenusCtrl.content.edgeDragThreshold &&
-                                // data.offsetX >= yooSideMenusCtrl.content.edgeDragThreshold &&
-                                // data.x >= yooSideMenusCtrl.content.edgeDragThreshold &&
-                                data.clientX <= yooSideMenusCtrl.content.getWidth() - yooSideMenusCtrl.content.edgeDragThreshold //&&
-                                // data.offsetX <= yooSideMenusCtrl.content.getWidth() - yooSideMenusCtrl.content.edgeDragThreshold //&&
-                                // data.x <= yooSideMenusCtrl.content.getWidth() - yooSideMenusCtrl.content.edgeDragThreshold
-                                ;
-                                console.log('_cancelUpdate', _cancelUpdate);
-                                return _cancelUpdate;
-                            }
-                        };
-
-
-                        var _cancelEnd = function() {
-                                console.log('_cancelUpdate', _cancelUpdate);
-                            if(_cancelUpdate) {
-                                _cancelUpdate = false;
-                                return true;
-                            } else {
-                                _cancelUpdate = false;
-                                return false;
-                            }
-                        };
                         sync.on('start', function(data) {
-                            if(!_cancelStart(data)) {
-                                console.log('allowed start', yooSideMenusCtrl.content.edgeDragThreshold, data);
-                            } else {
-                                 console.log('start not close to edge', yooSideMenusCtrl.content.edgeDragThreshold, data);
-                            }
                             start = yooSideMenusCtrl.transitionable.get();
+                            startX = data.clientX;
                         });
 
                         sync.on('update', function(data) {
-                            if(!_cancelUpdate) {
-                                console.log('allowed update',data);
+                            if(updateAllowed || startInBounds()) {
+                                if(!updateAllowed) {
+                                    updateAllowed = true;
+                                }
                                 var delta = yooSideMenusCtrl.transitionable.get() - data.delta[0] / 300;
                                 if(delta < start + 1 && delta > start - 1) {
                                     yooSideMenusCtrl.transitionable.set(yooSideMenusCtrl.transitionable.get() - data.delta[0] / 300);
                                 }
-
-                            } else {
-                                console.log('update after start not close to edge', yooSideMenusCtrl.content.edgeDragThreshold, data);
-                            }
+                            } 
+                            // else {
+                            //     console.log('bad start from ', startX, 'with start position of', start);
+                            //     console.log('update after start not within', yooSideMenusCtrl.content.getEdgeDragThreshold(), 'px of edge', data);
+                            // }
                         });
 
                         sync.on('end', function(data) {
-                            if(!_cancelEnd()) {
-                                console.log('allowed end',data);
+                            if(updateAllowed || startInBounds()) {
                                 var next;
                                 if(Math.abs(data.velocity[0]) > 0.5) {
                                     next = data.velocity[0] > 0 ? Math.floor(yooSideMenusCtrl.transitionable.get()) : Math.ceil(yooSideMenusCtrl.transitionable.get());
@@ -182,9 +178,8 @@ module.exports = function(app) {
                                     method: 'wall',
                                     dampingRatio: 0.2
                                 });
-                            } else {
-                                console.log('end not close to edge', yooSideMenusCtrl.content.edgeDragThreshold, data);
-                            }
+                            } 
+                            updateAllowed = false;
                         });
 
                         var deregisterInstance = sideMenuDelegate._registerInstance(
