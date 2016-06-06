@@ -4,6 +4,7 @@
   "scripts": {
     "test": "gulp unit"
   },
+  "license": "MIT",
   "description": "Advanced HTML5 mobile components using famous-angular",
   "repository": {
     "type": "git",
