@@ -8,6 +8,7 @@ module.exports = function(app) {
 
     function controller() {
         var vm = this;
+        vm.edgeDragThreshold = true;
         vm.message = 'Hello World';
 
     }

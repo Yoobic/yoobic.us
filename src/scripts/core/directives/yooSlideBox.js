@@ -271,10 +271,8 @@ module.exports = function(app) {
                             yooSlideBoxCtrl.slideDirection = cleanSlideDirection(slideDirection);
                         });
 
-                        var deregisterInstance = slideBoxDelegate._registerInstance(
-                            yooSlideBoxCtrl, attrs.delegateHandle
-
-                        );
+                        var deleteHandle = attrs.delegateHandle || attrs.id;
+                        var deregisterInstance = slideBoxDelegate._registerInstance(yooSlideBoxCtrl, delegateHandle);
 
                         scope.$on('$destroy', function() {
                             yooSlideBoxCtrl.stopInner();
@@ -328,23 +326,25 @@ module.exports = function(app) {
                             }
                         });
 
-                        scope.$watch(function() {
-                            return {
-                                autoPlay: yooSlideBoxCtrl.autoPlay,
-                                slideInterval: yooSlideBoxCtrl.slideInterval,
-                                slideDirection: yooSlideBoxCtrl.slideDirection
-                            };
-                        }, function(newVal, oldVal) {
-                            if(newVal.slideDirection !== oldVal.slideDirection) {
+                        scope.$watchGroup([
+                                'yooSlideBoxCtrl.autoPlay',
+                                'yooSlideBoxCtrl.slideInterval',
+                                'yooSlideBoxCtrl.slideDirection'
+                        ], function(newVal, oldVal) {
+                            var autoPlay = 0;
+                            // var slideInterval = 1;
+                            var slideDirection = 2;
+
+                            if(newVal[slideDirection] !== oldVal[slideDirection]) {
                                 yooSlideBoxCtrl.slideDirection = cleanSlideDirection(newVal.slideDirection);
                             }
 
-                            if(newVal.autoPlay) {
+                            if(newVal[autoPlay]) {
                                 yooSlideBoxCtrl.startInner(); // start autoPlay $timeout loop
                             } else {
                                 yooSlideBoxCtrl.stopInner(); // stop autoPlay & cancel $timeout
                             }
-                        }, true);
+                        });
 
                         // $interval(function() {
                         //     console.log(' index: ', yooSlideBoxCtrl.getCurrentIndex());
